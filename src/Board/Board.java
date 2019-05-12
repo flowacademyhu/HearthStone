@@ -79,10 +79,10 @@ public class Board extends JFrame {
     // entire gameboard
     private void gameBoard() {
 
-        JPanel handOfPlayerOne = south();
+        JPanel handOfPlayerOne = hands(hand1);
         add(handOfPlayerOne, BorderLayout.SOUTH);
 
-        JPanel handOfPlayerTwo = north();
+        JPanel handOfPlayerTwo = hands(hand2);
         add(handOfPlayerTwo, BorderLayout.NORTH);
 
         JPanel endTurnAndHeroes = east();
@@ -204,7 +204,8 @@ public class Board extends JFrame {
                 hand2.add(deck2.get(1));
                 deck2.remove(0);
                 deck2.remove(1);
-                north();
+                pressedButton = (JButton) e.getSource();
+                gameBoard();
             }
 
             hero1.setText(hero1.getHeroName() + "/" + hero1.getHealth());
@@ -245,65 +246,26 @@ public class Board extends JFrame {
         return panel;
     }
 
-    //display hand of first player
-    private JPanel south() {
-
-        JPanel panel = new JPanel();
-        panel.setLayout(new FlowLayout());
-
-        for (Card card : hand1) {
-            if(card instanceof Minion){
-                card.setText(card.getCost() + "/" + card.getName() + "/" + (((Minion) card).getAttack()) + "/" + ((Minion) card).getHealth());
-                Border border = BorderFactory.createLineBorder(Color.BLUE, 2);
-                card.setBackground(Color.white);
-                card.setBorder(border);
-
-                //TODO
-                ActionListener actionListener = (ActionEvent e) -> {
-                    board1.add((Minion) e.getSource());
-                    hand1.remove(e.getSource());
-                    repaint();
-                    revalidate();
-                    centerBoard();
-                    //TODO
-                };
-                card.addActionListener(actionListener);
-
-                panel.add(card);
-            } else {
-                card.setText(card.getCost() + card.getName());
-                Border border = BorderFactory.createLineBorder(Color.RED, 2);
-                card.setBackground(Color.white);
-                card.setBorder(border);
-                card.addActionListener((ActionEvent e) -> {
-                    //TODO
-                });
-
-                panel.add(card);
-            }
-        }
-        return panel;
-    }
-
-    //display hand of second player
-    private JPanel north() {
+    //display hands of players
+    private JPanel hands(List<Card> hand) {
 
         JPanel panel = new JPanel();
         panel.setLayout(new FlowLayout());
 
         //display hand on board
-        for (int i = 0; i < hand2.size(); i++) {
-            if (hand2.get(i) instanceof Minion) {
-                JButton card = new JButton(hand2.get(i).getCost() + "/" +
-                        hand2.get(i).getName() + "/" +
-                        ((Minion) hand2.get(i)).getAttack() + "/" +
-                        ((Minion) hand2.get(i)).getHealth());
+
+        for (int i = 0; i < hand.size(); i++) {
+            if (hand.get(i) instanceof Minion) {
+                JButton card = new JButton(hand.get(i).getCost() + "/" +
+                        hand.get(i).getName() + "/" +
+                        ((Minion) hand.get(i)).getAttack() + "/" +
+                        ((Minion) hand.get(i)).getHealth());
                 Border border = BorderFactory.createLineBorder(Color.BLUE, 2);
                 card.setBackground(Color.white);
                 card.setBorder(border);
                 panel.add(card);
-            } else if (hand2.get(i) instanceof Spell){
-                JButton card = new JButton(hand2.get(i).getCost() + "/" + hand2.get(i).getName());
+            } else if (hand.get(i) instanceof Spell){
+                JButton card = new JButton(hand.get(i).getCost() + "/" + hand.get(i).getName());
                 Border border = BorderFactory.createLineBorder(Color.RED, 2);
                 card.setBackground(Color.white);
                 card.setBorder(border);
@@ -314,6 +276,7 @@ public class Board extends JFrame {
              ) {
             System.out.println(card);
         }
+
         return panel;
     }
 }
