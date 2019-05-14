@@ -204,7 +204,7 @@ public class Board extends JFrame {
                 board2.add(recruit);
                 centerBoard();
             }
-            //warlock //TODO something goes wrong (duplicate)
+            //warlock
             else if(e.getSource() instanceof Warlock){
                 remove(handOfPlayerTwo);
                 hand2.add(deck2.get(0));
@@ -259,13 +259,17 @@ public class Board extends JFrame {
             }
             //paladin
             else if (e.getSource() instanceof Paladin) {
+                remove(board);
                 Minion recruit = new Minion("Recruit", "", 1, 1, 1, 1, "");
                 recruit.setText(recruit.getCost() + "/" + recruit.getName() + "/" + recruit.getAttack() + "/" + recruit.getHealth());
                 Border border = BorderFactory.createLineBorder(Color.BLUE, 2);
                 recruit.setBackground(Color.white);
                 recruit.setBorder(border);
                 board1.add(recruit);
-                centerBoard();
+                board.repaint();
+                board.revalidate();
+                board.doLayout();
+                //centerBoard();
             }
             //warlock //something goes wrong (duplicate cards)
             else if(e.getSource() instanceof Warlock){
