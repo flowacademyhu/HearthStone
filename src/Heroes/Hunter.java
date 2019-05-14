@@ -11,4 +11,9 @@ public class Hunter extends Hero{
         ((Hero)object).setHealth(((Hero)object).getHealth()-2);
     }
 
+    @Override
+    public String toString() {
+        return "Hunter";
+    }
+
 }

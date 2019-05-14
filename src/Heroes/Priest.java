@@ -18,9 +18,11 @@ public class Priest extends Hero {
     //heals 2
     public void heroPower(Object object) {
         //minion
-        if(object.getClass() == Minion.class && ((Minion) object).getMaxHealth() <= ((Minion) object).getHealth()-2){
+        if(object.getClass() == Minion.class && ((Minion) object).getMaxHealth() >= ((Minion) object).getHealth()+2){
+            System.out.println("+2hp");
             ((Minion) object).setHealth(((Minion) object).getHealth()+2);
-        }else if(object.getClass() == Minion.class && ((Minion) object).getMaxHealth() <= ((Minion) object).getHealth()-1){
+        }else if(object.getClass() == Minion.class && ((Minion) object).getMaxHealth() >= ((Minion) object).getHealth()+1){
+            System.out.println("+1hp");
             ((Minion) object).setHealth(((Minion) object).getHealth()+1);
         //priest
         }else if(object.getClass() == Priest.class && ((Priest) object).getHealth() < 29){
@@ -50,5 +52,8 @@ public class Priest extends Hero {
         }
     }
 
-    //TODO heropower
+    @Override
+    public String toString() {
+        return "Priest";
+    }
 }

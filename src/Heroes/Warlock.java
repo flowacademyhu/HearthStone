@@ -10,4 +10,9 @@ public class Warlock extends Hero {
     public void heroPower(Object object) {
 
     }
+
+    @Override
+    public String toString() {
+        return "Warlock";
+    }
 }

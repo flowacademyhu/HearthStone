@@ -17,13 +17,15 @@ public class Board extends JFrame {
 
     boolean heroOnePressed = false;
     boolean heroTwoPressed = false;
+    boolean minionPressed = false;
     JButton pressedButton = new JButton();
 
     int mana = 0;
 
     private Deck deck = new Deck();
+
     private Hero hero1 = new Mage("Mage");
-    private Hero hero2 = new Warlock("Warlock");
+    private Hero hero2 = new Priest("Priest");
 
     private List<Card> deck1 = new ArrayList<>(deck.deckBuilder());
     private List<Card> deck2 = new ArrayList<>(deck.deckBuilder());
@@ -34,9 +36,13 @@ public class Board extends JFrame {
     private List<Card> hand1 = new ArrayList<>();
     private List<Card> hand2 = new ArrayList<>();
 
+    private List<JLabel> steps = new ArrayList<>();
+
     JPanel handOfPlayerOne = null;
     JPanel handOfPlayerTwo = null;
     JPanel board = null;
+    JPanel whatHappened = null;
+    JPanel endTurnAndHeroes = null;
 
     public Board() throws HeadlessException {
 
@@ -89,14 +95,25 @@ public class Board extends JFrame {
         handOfPlayerTwo = hands(hand2);
         add(handOfPlayerTwo, BorderLayout.NORTH);
 
-        JPanel endTurnAndHeroes = east();
+        endTurnAndHeroes = east();
         add(endTurnAndHeroes, BorderLayout.EAST);
 
-        JLabel whatHappened = new JLabel("Mi történt");
+        whatHappened = west();
         add(whatHappened, BorderLayout.WEST);
 
         board = centerBoard();
 
+    }
+
+    private JPanel west() {
+
+        JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS) );
+
+        for (JLabel step: steps) {
+            panel.add(step);
+        }
+        return panel;
     }
 
     //place of played minions
@@ -132,22 +149,52 @@ public class Board extends JFrame {
             //deletes dead minions
             if ( card.getHealth() <= 0){
                 board.remove(card);
+
+                whatHappenedMinionKill(card);
+
                 centerBoard();
             }
-            card.removeActionListener(card.getAction());
+
+            card.removeActionListener(card.getActionListeners()[0]);
+
             card.addActionListener((ActionEvent e) -> {
-                System.out.println();
+
                 if (heroTwoPressed) {
+                    System.out.println("priest is pressed");
+                    System.out.println(hero2);
+                    System.out.println(e.getSource());
                     hero2.heroPower(e.getSource());
+                    whatHappenedMageOrPriest(hero2, e.getSource());
                     pressedButton = null;
                     ((Minion) e.getSource()).setText(((Minion) e.getSource()).getCost()+"/"+((Minion) e.getSource()).getName()+"/"+((Minion) e.getSource()).getAttack()+"/"+((Minion) e.getSource()).getHealth());
                     heroTwoPressed = false;
                 } else if (heroOnePressed) {
                     hero1.heroPower(e.getSource());
+                    whatHappenedMageOrPriest(hero1, e.getSource());
                     pressedButton = null;
                     ((Minion) e.getSource()).setText(((Minion) e.getSource()).getCost()+"/"+((Minion) e.getSource()).getName()+"/"+((Minion) e.getSource()).getAttack()+"/"+((Minion) e.getSource()).getHealth());
                     heroOnePressed = false;
+                } else {
+                    if (pressedButton == null) {
+                        minionPressed = true;
+                        pressedButton = ((Minion) e.getSource());
+                    } else if (minionPressed) {
+                        attackMinion(((Minion)pressedButton), ((Minion)e.getSource()));
+                        minionPressed = false;
+                    }
                 }
+
+                centerBoard();
+
+                remove(this.board);
+                this.board = centerBoard();
+                add(this.board, BorderLayout.CENTER);
+                this.board.repaint();
+                this.board.revalidate();
+                this.board.doLayout();
+                repaint();
+                revalidate();
+
 
             });
             panel.add(card);
@@ -170,47 +217,70 @@ public class Board extends JFrame {
         hero2.addActionListener((ActionEvent e) -> {
             if (heroTwoPressed && pressedButton == hero2) {
                 hero2.heroPower(hero2);
+                whatHappenedMageOrPriest(hero2, hero2);
                 heroTwoPressed = false;
-                pressedButton = new JButton();
+                pressedButton = null;
             } else if (heroTwoPressed && pressedButton == hero1) {
                 hero2.heroPower(hero1);
-                pressedButton = new JButton();
+                whatHappenedMageOrPriest(hero2, hero1);
+                pressedButton = null;
             } else if (heroOnePressed) {
                 hero1.heroPower(hero2);
+                whatHappenedMageOrPriest(hero1, hero2);
                 heroOnePressed = false;
-                pressedButton = new JButton();
+                pressedButton = null;
             }
             //priest
             else if (e.getSource() instanceof Priest) {
                 heroTwoPressed = true;
                 pressedButton = hero2;
+                whatHappenedHero(hero2);
             }
             //mage
             else if (e.getSource() instanceof Mage) {
                 heroTwoPressed = true;
                 pressedButton = hero2;
+                whatHappenedHero(hero2);
             }
             //hunter
             else if (e.getSource() instanceof Hunter) {
                 ((Hunter) e.getSource()).heroPower(hero1);
+                whatHappenedHero(hero2);
             }
             //paladin
             else if (e.getSource() instanceof Paladin) {
+                remove(board);
+
+                whatHappenedHero(hero2);
+
                 Minion recruit = new Minion("Recruit", "", 1, 1, 1, 1, "");
                 recruit.setText(recruit.getCost() + "/" + recruit.getName() + "/" + recruit.getAttack() + "/" + recruit.getHealth());
                 Border border = BorderFactory.createLineBorder(Color.BLUE, 2);
                 recruit.setBackground(Color.white);
                 recruit.setBorder(border);
+
                 board2.add(recruit);
-                centerBoard();
+                board = centerBoard();
+                add(board, BorderLayout.CENTER);
+                board.repaint();
+                board.revalidate();
+                board.doLayout();
+                repaint();
+                revalidate();
             }
             //warlock
             else if(e.getSource() instanceof Warlock){
                 remove(handOfPlayerTwo);
+
+                whatHappenedHero(hero2);
+
+                ((Warlock) e.getSource()).setHealth(((Warlock) e.getSource()).getHealth()-2);
+
                 hand2.add(deck2.get(0));
                 hand2.add(deck2.get(1));
                 deck2.remove(0);
                 deck2.remove(0);
+
                 handOfPlayerTwo = hands(hand2);
                 add(handOfPlayerTwo, BorderLayout.NORTH);
                 handOfPlayerTwo.repaint();
@@ -226,6 +296,15 @@ public class Board extends JFrame {
 
         //end turn button
         JButton endTurn = new JButton("End Turn");
+        endTurn.addActionListener((ActionEvent e) -> {
+            remove(whatHappened);
+            steps.add(new JLabel("--------New turn--------"));
+            whatHappened = west();
+            add(whatHappened, BorderLayout.WEST);
+            whatHappened.repaint();
+            whatHappened.revalidate();
+            whatHappened.doLayout();
+        });
         panel.add(endTurn, BorderLayout.EAST);
 
         //hero of player one
@@ -233,56 +312,76 @@ public class Board extends JFrame {
         hero1.addActionListener((ActionEvent e) -> {
             if (heroOnePressed && pressedButton == hero1) {
                 hero1.heroPower(hero1);
+                whatHappenedMageOrPriest(hero1, hero1);
                 heroOnePressed = false;
-                pressedButton = new JButton();
+                pressedButton = null;
             } else if (heroOnePressed && pressedButton == hero2) {
                 hero1.heroPower(hero2);
-                pressedButton = new JButton();
+                whatHappenedMageOrPriest(hero1, hero2);
+                pressedButton = null;
             } else if (heroTwoPressed) {
                 hero2.heroPower(hero1);
+                whatHappenedMageOrPriest(hero2, hero1);
                 heroTwoPressed = false;
-                pressedButton = new JButton();
+                pressedButton = null;
             }
             //priest
             else if (e.getSource() instanceof Priest) {
                 heroOnePressed = true;
                 pressedButton = hero1;
+                whatHappenedHero(hero1);
             }
             //mage
             else if (e.getSource() instanceof Mage) {
                 heroOnePressed = true;
                 pressedButton = hero1;
+                whatHappenedHero(hero1);
             }
             //hunter
             else if (e.getSource() instanceof Hunter) {
                 ((Hunter) e.getSource()).heroPower(hero2);
+                whatHappenedHero(hero1);
             }
             //paladin
             else if (e.getSource() instanceof Paladin) {
                 remove(board);
+
+                whatHappenedHero(hero1);
+
                 Minion recruit = new Minion("Recruit", "", 1, 1, 1, 1, "");
                 recruit.setText(recruit.getCost() + "/" + recruit.getName() + "/" + recruit.getAttack() + "/" + recruit.getHealth());
                 Border border = BorderFactory.createLineBorder(Color.BLUE, 2);
                 recruit.setBackground(Color.white);
                 recruit.setBorder(border);
                 board1.add(recruit);
+
+                board = centerBoard();
+                add(board, BorderLayout.CENTER);
                 board.repaint();
                 board.revalidate();
                 board.doLayout();
+                repaint();
+                revalidate();
                 //centerBoard();
             }
-            //warlock //something goes wrong (duplicate cards)
+            //warlock
             else if(e.getSource() instanceof Warlock){
                 remove(handOfPlayerOne);
+
+                whatHappenedHero(hero1);
+
+                ((Warlock) e.getSource()).setHealth(((Warlock) e.getSource()).getHealth()-2);
                 hand1.add(deck1.get(0));
                 hand1.add(deck1.get(1));
                 deck1.remove(0);
                 deck1.remove(0);
+
                 handOfPlayerOne = hands(hand1);
                 add(handOfPlayerOne, BorderLayout.SOUTH);
                 handOfPlayerOne.repaint();
                 handOfPlayerOne.revalidate();
                 handOfPlayerOne.doLayout();
+
                 pressedButton = (JButton) e.getSource();
             }
 
@@ -308,18 +407,41 @@ public class Board extends JFrame {
                 Border border = BorderFactory.createLineBorder(Color.BLUE, 2);
                 card.setBackground(Color.white);
                 card.setBorder(border);
+                //hand of player one
                 if(hand.equals(hand1)) {
                     ActionListener actionListener = (ActionEvent e) -> {
+                        remove(board);
+
                         board1.add((Minion) e.getSource());
                         hand1.remove(e.getSource());
-                        centerBoard();
+
+                        whatHappenedMinion((Minion)e.getSource());
+
+                        board = centerBoard();
+                        add(board, BorderLayout.CENTER);
+                        board.repaint();
+                        board.revalidate();
+                        board.doLayout();
+                        //centerBoard();
                     };
                     card.addActionListener(actionListener);
-                } if(hand.equals(hand2)) {
+                }
+                //hand of player two
+                if(hand.equals(hand2)) {
                     ActionListener actionListener = (ActionEvent e) -> {
+                        remove(board);
+
                         board2.add((Minion) e.getSource());
                         hand2.remove(e.getSource());
-                        centerBoard();
+
+                        whatHappenedMinion((Minion)e.getSource());
+
+                        board = centerBoard();
+                        add(board, BorderLayout.CENTER);
+                        board.repaint();
+                        board.revalidate();
+                        board.doLayout();
+                        //centerBoard();
                     };
                     card.addActionListener(actionListener);
                 }
@@ -338,4 +460,75 @@ public class Board extends JFrame {
         }
         return panel;
     }
+
+    //TODO harcot megírni
+    //attack, battle, fight
+    private void attackMinion(Minion minionAttack, Minion minionDef) {
+        minionAttack.setHealth(minionAttack.getHealth() - minionDef.getAttack());
+        minionDef.setHealth(minionDef.getHealth() - minionAttack.getAttack());
+        minionAttack.setText(minionAttack.getCost() + "/" + minionAttack.getName() + "/" + minionAttack.getAttack() + "/" + minionAttack.getHealth());
+        minionDef.setText(minionDef.getCost() + "/" + minionDef.getName() + "/" + minionDef.getAttack() + "/" + minionDef.getHealth());
+        repaint();
+        revalidate();
+    }
+
+    //TODO harcot megírni
+    //attack, battle, fight
+    private void attackHero() {
+
+    }
+
+    //the followings are whatHappenedMethods
+
+    private void whatHappenedMinion(Minion button) {
+        remove(whatHappened);
+        steps.add(new JLabel("Summoned: " + ((Minion) button).getName()));
+        whatHappened = west();
+        add(whatHappened, BorderLayout.WEST);
+        whatHappened.repaint();
+        whatHappened.revalidate();
+        whatHappened.doLayout();
+    }
+
+    private void whatHappenedHero(Hero button) {
+        remove(whatHappened);
+        steps.add(new JLabel(((Hero)button).getHeroName() + " used heropower"));
+        whatHappened = west();
+        add(whatHappened, BorderLayout.WEST);
+        whatHappened.repaint();
+        whatHappened.revalidate();
+        whatHappened.doLayout();
+    }
+
+    private void whatHappenedMageOrPriest (Hero button1, Object button2) {
+        remove(whatHappened);
+
+        if (button1.toString().equals("Priest") && button2 instanceof Minion) {
+            steps.add(new JLabel(((Hero) button1).getHeroName() + " healed " + ((Minion) button2).getName()));
+        } else if (button1.toString().equals("Mage") && button2 instanceof Minion) {
+            steps.add(new JLabel(((Hero) button1).getHeroName() + " damaged " + ((Minion) button2).getName()));
+        }else if(button1.toString().equals("Priest")) {
+            steps.add(new JLabel(((Hero) button1).getHeroName() + " healed " + button2));
+        } else {
+            steps.add(new JLabel(((Hero) button1).getHeroName() + " damaged " + button2));
+        }
+        whatHappened = west();
+        add(whatHappened, BorderLayout.WEST);
+        whatHappened.repaint();
+        whatHappened.revalidate();
+        whatHappened.doLayout();
+    }
+
+    private void whatHappenedMinionKill(Minion minion) {
+        remove(whatHappened);
+
+        steps.add(new JLabel(minion.getName() + " was killed"));
+
+        whatHappened = west();
+        add(whatHappened, BorderLayout.WEST);
+        whatHappened.repaint();
+        whatHappened.revalidate();
+        whatHappened.doLayout();
+    }
+
 }

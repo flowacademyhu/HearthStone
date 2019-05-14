@@ -10,4 +10,9 @@ public class Paladin extends Hero{
     public void heroPower(Object object) {
 
     }
+
+    @Override
+    public String toString() {
+        return "Paladin";
+    }
 }
