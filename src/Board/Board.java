@@ -134,6 +134,7 @@ public class Board extends JFrame {
 
         repaint();
         revalidate();
+        doLayout();
 
         return panel;
     }
@@ -153,6 +154,15 @@ public class Board extends JFrame {
                 whatHappenedMinionKill(card);
 
                 centerBoard();
+
+                remove(this.board);
+                this.board = centerBoard();
+                add(this.board, BorderLayout.CENTER);
+                this.board.repaint();
+                this.board.revalidate();
+                this.board.doLayout();
+                repaint();
+                revalidate();
             }
 
             card.removeActionListener(card.getActionListeners()[0]);
@@ -175,12 +185,34 @@ public class Board extends JFrame {
                     ((Minion) e.getSource()).setText(((Minion) e.getSource()).getCost()+"/"+((Minion) e.getSource()).getName()+"/"+((Minion) e.getSource()).getAttack()+"/"+((Minion) e.getSource()).getHealth());
                     heroOnePressed = false;
                 } else {
-                    if (pressedButton == null) {
+                    if (!minionPressed) {
                         minionPressed = true;
                         pressedButton = ((Minion) e.getSource());
+
+                        centerBoard();
+
+                        remove(this.board);
+                        this.board = centerBoard();
+                        add(this.board, BorderLayout.CENTER);
+                        this.board.repaint();
+                        this.board.revalidate();
+                        this.board.doLayout();
+                        repaint();
+                        revalidate();
                     } else if (minionPressed) {
                         attackMinion(((Minion)pressedButton), ((Minion)e.getSource()));
                         minionPressed = false;
+
+                        centerBoard();
+
+                        remove(this.board);
+                        this.board = centerBoard();
+                        add(this.board, BorderLayout.CENTER);
+                        this.board.repaint();
+                        this.board.revalidate();
+                        this.board.doLayout();
+                        repaint();
+                        revalidate();
                     }
                 }
 
@@ -231,24 +263,24 @@ public class Board extends JFrame {
                 pressedButton = null;
             }
             //priest
-            else if (e.getSource() instanceof Priest) {
+            else if (!minionPressed && e.getSource() instanceof Priest) {
                 heroTwoPressed = true;
                 pressedButton = hero2;
                 whatHappenedHero(hero2);
             }
             //mage
-            else if (e.getSource() instanceof Mage) {
+            else if (!minionPressed && e.getSource() instanceof Mage) {
                 heroTwoPressed = true;
                 pressedButton = hero2;
                 whatHappenedHero(hero2);
             }
             //hunter
-            else if (e.getSource() instanceof Hunter) {
+            else if (!minionPressed && e.getSource() instanceof Hunter) {
                 ((Hunter) e.getSource()).heroPower(hero1);
                 whatHappenedHero(hero2);
             }
             //paladin
-            else if (e.getSource() instanceof Paladin) {
+            else if (!minionPressed && e.getSource() instanceof Paladin) {
                 remove(board);
 
                 whatHappenedHero(hero2);
@@ -269,7 +301,7 @@ public class Board extends JFrame {
                 revalidate();
             }
             //warlock
-            else if(e.getSource() instanceof Warlock){
+            else if(!minionPressed && e.getSource() instanceof Warlock){
                 remove(handOfPlayerTwo);
 
                 whatHappenedHero(hero2);
@@ -287,6 +319,11 @@ public class Board extends JFrame {
                 handOfPlayerTwo.revalidate();
                 handOfPlayerTwo.doLayout();
                 pressedButton = (JButton) e.getSource();
+            }
+            else if(minionPressed){
+                attackHero(((Minion)pressedButton), hero2);
+                minionPressed = false;
+                pressedButton = null;
             }
 
             hero1.setText(hero1.getHeroName() + "/" + hero1.getHealth());
@@ -326,24 +363,24 @@ public class Board extends JFrame {
                 pressedButton = null;
             }
             //priest
-            else if (e.getSource() instanceof Priest) {
+            else if (!minionPressed && e.getSource() instanceof Priest) {
                 heroOnePressed = true;
                 pressedButton = hero1;
                 whatHappenedHero(hero1);
             }
             //mage
-            else if (e.getSource() instanceof Mage) {
+            else if (!minionPressed && e.getSource() instanceof Mage) {
                 heroOnePressed = true;
                 pressedButton = hero1;
                 whatHappenedHero(hero1);
             }
             //hunter
-            else if (e.getSource() instanceof Hunter) {
+            else if (!minionPressed && e.getSource() instanceof Hunter) {
                 ((Hunter) e.getSource()).heroPower(hero2);
                 whatHappenedHero(hero1);
             }
             //paladin
-            else if (e.getSource() instanceof Paladin) {
+            else if (!minionPressed && e.getSource() instanceof Paladin) {
                 remove(board);
 
                 whatHappenedHero(hero1);
@@ -365,7 +402,7 @@ public class Board extends JFrame {
                 //centerBoard();
             }
             //warlock
-            else if(e.getSource() instanceof Warlock){
+            else if(!minionPressed && e.getSource() instanceof Warlock){
                 remove(handOfPlayerOne);
 
                 whatHappenedHero(hero1);
@@ -461,7 +498,6 @@ public class Board extends JFrame {
         return panel;
     }
 
-    //TODO harcot megírni
     //attack, battle, fight
     private void attackMinion(Minion minionAttack, Minion minionDef) {
         minionAttack.setHealth(minionAttack.getHealth() - minionDef.getAttack());
@@ -474,8 +510,10 @@ public class Board extends JFrame {
 
     //TODO harcot megírni
     //attack, battle, fight
-    private void attackHero() {
-
+    private void attackHero(Minion minion, Hero hero) {
+        hero.setHealth(hero.getHealth() - minion.getAttack());
+        repaint();
+        revalidate();
     }
 
     //the followings are whatHappenedMethods
