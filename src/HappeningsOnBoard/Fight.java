@@ -4,6 +4,7 @@ import Cards.Minion;
 import Heroes.Hero;
 
 import java.util.List;
+import java.util.ListIterator;
 
 public class Fight {
 
@@ -21,15 +22,26 @@ public class Fight {
         hero.setHealth(hero.getHealth() - minion.getAttack());
     }
 
-
     //minion dies
     public List<Minion> isMinionDied(List<Minion> board){
 
-        for (Minion minion : board) {
+        /*for (Minion minion : board) {
             if(minion.getHealth()>=0){
                 board.remove(minion);
+                System.out.println(minion + "died");
             }
-            System.out.println(minion + "died");
+        }*/
+
+        ListIterator<Minion> listIterator = board.listIterator();
+
+        while(listIterator.hasNext()) {
+            if(listIterator.next().getHealth() <= 0){
+
+                System.out.println(listIterator.next() + "died");
+
+                listIterator.remove();
+
+            }
         }
 
         return board;

@@ -4,7 +4,7 @@ import HappeningsOnBoard.Fight;
 import Cards.Card;
 import Cards.Minion;
 import Cards.Spell;
-import HappeningsOnBoard.SpellEffects;
+import Cards.SpellEffects;
 import Heroes.*;
 import Player.Deck;
 import Player.Player;
@@ -13,6 +13,7 @@ import Player.Hand;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.concurrent.TimeUnit;
 
 public class Logic {
 
@@ -133,15 +134,60 @@ public class Logic {
                     System.out.println("-----------------------------");
                     System.out.println("DECK1: " + deck1.size());
                     System.out.println("-----------------------------");
-                    System.out.println("player1 do something /playcard/ or /attackMinion/ or /attackHero/ or /draw/");
+                    System.out.println("player1 do something /board/ or /hero/ or /hand/ or /playcard/ or /attackminion/ or /attackhero/ or /draw/ or /mana/ or /heropower/*** or /endturn/ ");
 
                     s = scan.nextLine();
 
+                    //press endturn
+                    if(s.equals("endturn")) {
+                        isPlayer2Turn = false;
+                        isPlayer2Turn = true;
+                        mana = 10;
+                        System.out.println("Next player's turn in 10 seconds");
+                        try {
+                            TimeUnit.SECONDS.sleep(10);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        endTurn = true;
+                    }
+
+                    //play heropower
+                    if(s.equals("heropower")){
+                        //TODO
+                    }
+
+                    //look at mana
+                    if(s.equals("mana")){
+                        System.out.println("-----------------------------");
+                        System.out.println("Remaining mana: " + mana);
+                        System.out.println("-----------------------------");
+                    }
+
+                    //look at the board
+                    if (s.equals("board")) {
+                        System.out.println(board1);
+                        System.out.println(board2);
+                    }
+
+                    //look at hand
+                    if(s.equals("hand")){
+                        System.out.println(hand1);
+                    }
+
+                    //look at hero
+                    if(s.equals("hero")){
+                        System.out.println(hero1);
+                        System.out.println(hero1.getHealth());
+                    }
+
+                    //draw card (number means how many)
                     if(s.equals("draw")) {
 
-                        List<Card> drawedCards = deck.draw(2, hand1, deck1, hero1);
+                        List<Card> drawedCards = new ArrayList<>();
+                        drawedCards = deck.draw(2, drawedCards, deck1, hero1);
 
-                        //TODO
+                        System.out.println("DRAWED cards" + drawedCards);
 
                         hand1.addAll(drawedCards);
 
@@ -159,7 +205,7 @@ public class Logic {
                         s = scan.nextLine();
 
                         //play minion
-                        if (hand1.get(Integer.parseInt(s)) instanceof Minion) {
+                        if (hand1.get(Integer.parseInt(s)) instanceof Minion && hand1.get(Integer.parseInt(s)).getCost() <= mana) {
                             hand.addCardToBoard(board1, (Minion) hand1.get(Integer.parseInt(s)));
                             mana -= ((Minion) hand1.get(Integer.parseInt(s))).getCost();
                             hand1.remove((Minion) hand1.get(Integer.parseInt(s)));
@@ -169,11 +215,13 @@ public class Logic {
                             System.out.println("-----------------------------");
 
                             //play spell
-                        } else if (hand1.get(Integer.parseInt(s)) instanceof Spell) {
+                        } else if (hand1.get(Integer.parseInt(s)) instanceof Spell && hand1.get(Integer.parseInt(s)).getCost() <= mana) {
 
                             System.out.println("target? /hero/ or /minion/");
 
                             String b = scan.nextLine();
+
+                            mana -= ((Spell) hand1.get(Integer.parseInt(s))).getCost();
 
                             if (b.equals("minion")) {
 
@@ -310,6 +358,7 @@ public class Logic {
                                         System.out.println("-----------------------------");
 
                                     }
+                                }
                                 } else if (b.equals("hero")) {
 
                                     System.out.println("which hero? /1/2/");
@@ -324,6 +373,7 @@ public class Logic {
 
                                             System.out.println("-----------------------------");
                                             System.out.println(hero1);
+                                            System.out.println(hero1.getHealth());
                                             System.out.println("-----------------------------");
 
                                         } else if (((Spell) hand1.get(Integer.parseInt(s))).getEffect().equals("savethehero")) {
@@ -361,7 +411,7 @@ public class Logic {
                             }
                         }
                         //attack minion minion
-                        if (s.equals("attackMinion") && !(board1.isEmpty()) && !(board2.isEmpty())) {
+                        if (s.equals("attackminion") && !board1.isEmpty() && !board2.isEmpty()) {
                             String d;
                             System.out.println(board1);
                             System.out.println("choose a minion (number) to attack with");
@@ -377,7 +427,7 @@ public class Logic {
                             System.out.println("-----------------------------");
                         }
                         //attack minion hero
-                        if (s.equals("attackHero")) {
+                        if (s.equals("attackhero")) {
                             String d;
                             System.out.println("number of minion");
                             s = scan.nextLine();
@@ -387,17 +437,12 @@ public class Logic {
                             System.out.println(hero2.getHeroName() + "'s hp: " + hero2.getHealth());
                             System.out.println("-----------------------------");
                         }
-
                     }
-
-
-                    isPlayer2Turn = false;
-                    isPlayer2Turn = true;
                 }
 
                 if (isPlayer2Turn) {
 
-                    System.out.println("player one hand " + hand2);
+                    System.out.println("player two hand " + hand2);
                     System.out.println("-----------------------------");
                     System.out.println("DECK2: " + deck2.size());
                     System.out.println("-----------------------------");
@@ -406,9 +451,8 @@ public class Logic {
                 }
 
 
-            }
-
-
         }
+
+
     }
 }

@@ -9,13 +9,15 @@ public class Minion extends Card {
     private final String id;
     private int attack;
     private int health;
+    private int basicAttack;
+    private int basicHealth;
     private int maxHealth;
     private String effect;
     private boolean canAttack;
     //TODO private String type; (pl murloc);
 
 
-    public Minion(String name, String description, int cost, int attack, int health, int maxHealth, boolean canAttack, String effect) {
+    public Minion(String name, String description, int cost, int attack, int basicAttack, int health, int basicHealth, int maxHealth, boolean canAttack, String effect) {
         super(name, description, cost);
         this.id = UUID.randomUUID().toString();
         this.attack = attack;
@@ -23,6 +25,24 @@ public class Minion extends Card {
         this.effect = effect;
         this.canAttack = canAttack;
         this.maxHealth = maxHealth;
+        this.basicAttack = basicAttack;
+        this.basicHealth = basicHealth;
+    }
+
+    public int getBasicAttack() {
+        return basicAttack;
+    }
+
+    public void setBasicAttack(int basicAttack) {
+        this.basicAttack = basicAttack;
+    }
+
+    public int getBasicHealth() {
+        return basicHealth;
+    }
+
+    public void setBasicHealth(int basicHealth) {
+        this.basicHealth = basicHealth;
     }
 
     public boolean isCanAttack() {

@@ -1,7 +1,8 @@
-package HappeningsOnBoard;
+package Cards;
 
 import Cards.Card;
 import Cards.Minion;
+import HappeningsOnBoard.Fight;
 import Heroes.Hero;
 
 import java.util.List;
@@ -19,18 +20,40 @@ public class SpellEffects {
 
     public void cavalry(int i, List<Minion> board) {
 
-        if (i != 0) {
+        try {
+            if (i == board.size()-1) {
 
-            board.get(i - 1).setAttack(board.get(i - 1).getAttack() + 1);
-            board.get(i + 1).setHealth(board.get(i + 1).getHealth() + 1);
+                board.get(i - 1).setHealth(board.get(i - 1).getHealth() + 1);
+                board.get(i - 1).setAttack(board.get(i - 1).getAttack() + 1);
 
-        } else {
 
-            board.get(i + 1).setHealth(board.get(i + 1).getHealth() + 1);
+            } else if (i != 0) {
+
+                board.get(i - 1).setAttack(board.get(i - 1).getAttack() + 1);
+                board.get(i - 1).setHealth(board.get(i - 1).getHealth() + 1);
+
+
+                board.get(i + 1).setHealth(board.get(i + 1).getHealth() + 1);
+                board.get(i + 1).setAttack(board.get(i + 1).getAttack() + 1);
+
+
+            } //else if (board.size() == 1) { }
+            else {
+
+                board.get(i + 1).setHealth(board.get(i + 1).getHealth() + 1);
+                board.get(i + 1).setAttack(board.get(i + 1).getAttack() + 1);
+
+
+            }
+        } catch (IndexOutOfBoundsException e) {
+            System.out.println("no use of that move");
         }
     }
 
     public void flee(int i, List<Minion> board, List<Card> hand){
+
+        board.get(i).setHealth(board.get(i).getBasicHealth());
+        board.get(i).setAttack(board.get(i).getBasicAttack());
 
         hand.add(board.get(i));
 
