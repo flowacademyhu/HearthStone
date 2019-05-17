@@ -1,5 +1,6 @@
 package Cards;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -89,4 +90,6 @@ public class Minion extends Card {
                 ", effect='" + effect + '\'' +
                 '}';
     }
+
+
 }

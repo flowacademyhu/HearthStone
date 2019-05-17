@@ -39,11 +39,8 @@ public class Board extends JFrame {
     private List<Card> hand1 = new ArrayList<>();
     private List<Card> hand2 = new ArrayList<>();
 
-    Player player1 = new Player(deck1, hand1, hero1);
-    Player player2 = new Player(deck2, hand2, hero2);
-
-    boolean usedHero1 = false;
-    boolean usedHero2 = false;
+    boolean usedHero1 = true;
+    boolean usedHero2 = true;
 
     private List<JLabel> steps = new ArrayList<>();
 
@@ -52,6 +49,11 @@ public class Board extends JFrame {
     JPanel board = null;
     JPanel whatHappened = null;
     JPanel endTurnAndHeroes = null;
+
+    Player player1 = new Player(deck1, hand1, hero1);
+    Player player2 = new Player(deck2, hand2, hero2);
+
+    int turn = 1;
 
     public Board() throws HeadlessException {
 
@@ -157,8 +159,6 @@ public class Board extends JFrame {
 
         for (Minion card:board) {
 
-
-
             //deletes dead minions
             if ( card.getHealth() <= 0){
                 board.remove(card);
@@ -200,17 +200,16 @@ public class Board extends JFrame {
                     if (!minionPressed) {
                         minionPressed = true;
                         pressedButton = ((Minion) e.getSource());
-
+                        System.out.println("asd");
                         //centerBoard();
 
                         remove(this.board);
                         this.board = centerBoard();
-                        add(this.board, BorderLayout.CENTER);
                         this.board.repaint();
                         this.board.revalidate();
                         this.board.doLayout();
-                        repaint();
                         revalidate();
+                        repaint();
                     } else if (pressedButton.getClass() == Minion.class) {
                         attackMinion(((Minion)pressedButton), ((Minion)e.getSource()));
                         minionPressed = false;
@@ -265,7 +264,7 @@ public class Board extends JFrame {
         //hero of player two
         hero2.setText(hero2.getHeroName() + "/" + hero2.getHealth());
         hero2.addActionListener((ActionEvent e) -> {
-                    if(!usedHero2) {
+                    if(usedHero2 && !minionPressed) {
                         if (heroTwoPressed && pressedButton == hero2 && mana2 >= 2) {
                             hero2.heroPower(hero2);
                             whatHappenedMageOrPriest(hero2, hero2);
@@ -350,11 +349,13 @@ public class Board extends JFrame {
                             handOfPlayerTwo.revalidate();
                             handOfPlayerTwo.doLayout();
                             pressedButton = (JButton) e.getSource();
-                        } else if (minionPressed) {
-                            attackHero(((Minion) pressedButton), hero2);
-                            minionPressed = false;
-                            pressedButton = null;
                         }
+                        usedHero2 = false;
+                    }
+                    if (minionPressed) {
+                        attackHero(((Minion) pressedButton), hero2);
+                        minionPressed = false;
+                        pressedButton = null;
                     }
 
             hero1.setText(hero1.getHeroName() + "/" + hero1.getHealth());
@@ -378,7 +379,7 @@ public class Board extends JFrame {
         //hero of player one
         hero1.setText(hero1.getHeroName() + "/" + hero1.getHealth());
         hero1.addActionListener((ActionEvent e) -> {
-            if(!usedHero1) {
+            if(usedHero1 && !minionPressed) {
                 if (heroOnePressed && pressedButton == hero1 && mana1 >= 2) {
                     hero1.heroPower(hero1);
                     whatHappenedMageOrPriest(hero1, hero1);
@@ -464,11 +465,13 @@ public class Board extends JFrame {
                     handOfPlayerOne.doLayout();
 
                     pressedButton = (JButton) e.getSource();
-                } else if (minionPressed) {
-                    attackHero(((Minion) pressedButton), hero1);
-                    minionPressed = false;
-                    pressedButton = null;
                 }
+                usedHero1 = false;
+            }
+            if (minionPressed) {
+                attackHero(((Minion) pressedButton), hero1);
+                minionPressed = false;
+                pressedButton = null;
             }
 
             hero1.setText(hero1.getHeroName() + "/" + hero1.getHealth());

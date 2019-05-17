@@ -1,5 +1,6 @@
 package Cards;
 
+import java.util.List;
 import java.util.UUID;
 
 public class Spell extends Card{

@@ -42,4 +42,13 @@ public class Player {
     public void setHero(Hero hero) {
         this.hero = hero;
     }
+
+    @Override
+    public String toString() {
+        return "Player{" +
+                "deck=" + deck + "\n" +
+                ", hand=" + hand + "\n" +
+                ", hero=" + hero +
+                '}';
+    }
 }

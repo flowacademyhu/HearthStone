@@ -1,6 +1,7 @@
 package Cards;
 
 import javax.swing.*;
+import java.util.List;
 
 public class Card extends JButton {
 
@@ -41,9 +42,9 @@ public class Card extends JButton {
 
     @Override
     public String toString() {
-        return "Card{" +
-                "name='" + name + '\'' +
-                ", description='" + description + '\'' +
+        return "\n" + "Card{" +
+                "name='" + name + "\n" +
+                ", description='" + description + "\n" +
                 ", cost=" + cost +
                 '}';
     }
