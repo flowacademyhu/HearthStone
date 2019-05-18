@@ -50,8 +50,8 @@ public class Board extends JFrame {
     JPanel whatHappened = null;
     JPanel endTurnAndHeroes = null;
 
-    Player player1 = new Player(deck1, hand1, hero1);
-    Player player2 = new Player(deck2, hand2, hero2);
+    Player player1 = new Player(deck1, hand1, board1, hero1);
+    Player player2 = new Player(deck2, hand2, board2, hero2);
 
     int turn = 1;
 

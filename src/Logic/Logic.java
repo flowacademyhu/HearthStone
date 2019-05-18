@@ -121,8 +121,8 @@ public class Logic {
         hand1 = deck.draw(3, hand1, deck1, hero1);
         hand2 = deck.draw(4, hand2, deck2, hero2);
 
-        player1 = new Player(deck1, hand1, hero1);
-        player2 = new Player(deck2, hand2, hero2);
+        player1 = new Player(deck1, hand1, board1, hero1);
+        player2 = new Player(deck2, hand2, board2, hero2);
 
         while (!gameEnded) {
 
@@ -532,7 +532,7 @@ public class Logic {
 
                                         if (((Spell) hand1.get(Integer.parseInt(s))).getEffect().equals("dragonfire")) {
 
-                                            spell.dragonFireHero(hero1);
+                                            spell.dragonFireHero(hero1, gameEnded);
 
                                             System.out.println("-----------------------------");
                                             System.out.println(hero1);
@@ -553,7 +553,7 @@ public class Logic {
 
                                         if (((Spell) hand1.get(Integer.parseInt(s))).getEffect().equals("dragonfire")) {
 
-                                            spell.dragonFireHero(hero2);
+                                            spell.dragonFireHero(hero2, gameEnded);
 
                                             System.out.println("-----------------------------");
                                             System.out.println(hero2);

@@ -81,10 +81,13 @@ public class SpellEffects {
 
     //spells on hero
 
-    public void dragonFireHero(Hero hero) {
+    public void dragonFireHero(Hero hero, boolean endGame) {
 
         hero.setHealth(hero.getHealth() - 4);
-        //TODO is dead?!
+
+        if(hero.getHealth() <= 0) {
+            endGame = true;
+        }
     }
 
     public void saveTheHero(Hero hero) {
