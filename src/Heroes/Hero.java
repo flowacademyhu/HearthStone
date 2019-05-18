@@ -10,7 +10,7 @@ public abstract class Hero extends JButton {
 
     public Hero(String heroName) {
         this.heroName = heroName;
-        this.health = 20;
+        this.health = 1;
     }
 
     public String getHeroName() {

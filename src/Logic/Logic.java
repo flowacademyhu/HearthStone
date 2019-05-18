@@ -36,6 +36,7 @@ public class Logic {
     boolean isPlayer2Turn = false;
 
     boolean gameEnded = false;
+    boolean heroPowerUsed = false;
 
     Hand hand = new Hand();
 
@@ -130,13 +131,36 @@ public class Logic {
             if (isPlayer1Turn) {
 
                 while (!endTurn) {
-                    System.out.println("player one hand " + hand1);
-                    System.out.println("-----------------------------");
-                    System.out.println("DECK1: " + deck1.size());
-                    System.out.println("-----------------------------");
-                    System.out.println("player1 do something /board/ or /hero/ or /hand/ or /playcard/ or /attackminion/ or /attackhero/ or /draw/ or /mana/ or /heropower/*** or /endturn/ ");
 
-                    s = scan.nextLine();
+                    //endGame
+                    if (hero2.getHealth() <= 0) {
+                        System.out.println("game over player1 won");
+                        endTurn = true;
+                        isPlayer1Turn = false;
+                        isPlayer2Turn = false;
+                        gameEnded = true;
+                    } else if (hero1.getHealth() <= 0) {
+                        System.out.println("game over player2 won");
+                        endTurn = true;
+                        isPlayer1Turn = false;
+                        isPlayer2Turn = false;
+                        gameEnded = true;
+                    }
+
+                    //help how to play
+                    if(!endTurn) {
+
+                        System.out.println("-----------------------------");
+                        System.out.println("-----------------------------");
+                        System.out.println("player one hand " + hand1);
+                        System.out.println("-----------------------------");
+                        System.out.println("DECK1: " + deck1.size());
+                        System.out.println("-----------------------------");
+                        System.out.println("player1 do something /board/ or /hero/ or /hand/ or /playcard/ or /attackminion/ or /attackhero/ or /draw/ or /mana/ or /heropower/*** or /endturn/ ");
+
+
+                        s = scan.nextLine();
+                    }
 
                     //press endturn
                     if(s.equals("endturn")) {
@@ -154,7 +178,109 @@ public class Logic {
 
                     //play heropower
                     if(s.equals("heropower")){
-                        //TODO
+                        if(mana >= 2 && !heroPowerUsed) {
+                            if(hero1.toString().equals("Hunter")){
+                                hero1.heroPower(hero2);
+                            }else if(hero1.toString().equals("Priest")) {
+
+                                System.out.println("use on /myhero/ or /enemyhero/ or /minion/");
+
+                                s = scan.nextLine();
+
+                                if (s.equals("myhero")) {
+                                    hero1.heroPower(hero1);
+                                } else if (s.equals("enemyhero")) {
+                                    hero1.heroPower(hero2);
+                                } else if (s.equals("minion")) {
+
+                                    System.out.println("choose board /1/2/");
+                                    System.out.println("-----------------------------");
+                                    System.out.println(board1);
+                                    System.out.println("-----------------------------");
+                                    System.out.println(board2);
+                                    System.out.println("-----------------------------");
+
+                                    s = scan.nextLine();
+
+                                    if (s.equals("1")) {
+
+                                        System.out.println("minion number");
+
+                                        s = scan.nextLine();
+
+                                        hero1.heroPower(board1.get(Integer.parseInt(s)));
+
+                                    } else if (s.equals("2")) {
+
+                                        System.out.println("minion number");
+
+                                        s = scan.nextLine();
+
+                                        hero1.heroPower(board2.get(Integer.parseInt(s)));
+                                    }
+
+                                }
+                            } else if (hero1.toString().equals("Mage")){
+
+                                System.out.println("use on /myhero/ or /enemyhero/ or /minion/");
+
+                                s = scan.nextLine();
+
+                                if (s.equals("myhero")) {
+                                    hero1.heroPower(hero1);
+                                } else if (s.equals("enemyhero")) {
+                                    hero1.heroPower(hero2);
+                                } else if (s.equals("minion")) {
+
+                                    System.out.println("choose board /1/2/");
+                                    System.out.println("-----------------------------");
+                                    System.out.println(board1);
+                                    System.out.println("-----------------------------");
+                                    System.out.println(board2);
+                                    System.out.println("-----------------------------");
+
+                                    s = scan.nextLine();
+
+                                    if (s.equals("1")) {
+
+                                        System.out.println("minion number");
+
+                                        s = scan.nextLine();
+
+                                        hero1.heroPower(board1.get(Integer.parseInt(s)));
+
+                                        fight.isMinionDied(board1);
+
+                                    } else if (s.equals("2")) {
+
+                                        System.out.println("minion number");
+
+                                        s = scan.nextLine();
+
+                                        hero1.heroPower(board2.get(Integer.parseInt(s)));
+
+                                        fight.isMinionDied(board2);
+                                    }
+
+                                }
+                            }
+                            else if (hero1.toString().equals("Paladin")) {
+                                Minion recruit = new Minion("Recruit", "", 1, 1,1,1, 1, 1, false, "");
+                                board1.add(recruit);
+                            } else if ((hero1.toString().equals("Warlock"))) {
+                                hero1.setHealth(hero1.getHealth() - 2);
+
+                                List<Card> drawedCards = new ArrayList<>();
+                                drawedCards = deck.draw(2, drawedCards, deck1, hero1);
+
+                                System.out.println("DRAWED cards" + drawedCards);
+
+                                hand1.addAll(drawedCards);
+
+                            }
+                                heroPowerUsed = true;
+                                mana -= 2;
+                        }
                     }
 
                     //look at mana
@@ -177,8 +303,13 @@ public class Logic {
 
                     //look at hero
                     if(s.equals("hero")){
+                        System.out.println("-----------------------------");
                         System.out.println(hero1);
                         System.out.println(hero1.getHealth());
+                        System.out.println("-----------------------------");
+                        System.out.println(hero2);
+                        System.out.println(hero2.getHealth());
+                        System.out.println("-----------------------------");
                     }
 
                     //draw card (number means how many)
@@ -418,9 +549,11 @@ public class Logic {
                             s = scan.nextLine();
                             System.out.println("choose a minion (number) to be attacked");
                             d = scan.nextLine();
-                            fight.attackMinion((Minion) board1.get(Integer.parseInt(s)), (Minion) board2.get(Integer.parseInt(d)));
-                            fight.isMinionDied(board1);
-                            fight.isMinionDied(board2);
+                            if ( board2.contains((Minion) board2.get(Integer.parseInt(d)))) {
+                                fight.attackMinion((Minion) board1.get(Integer.parseInt(s)), (Minion) board2.get(Integer.parseInt(d)));
+                                fight.isMinionDied(board1);
+                                fight.isMinionDied(board2);
+                            }
 
                             System.out.println(board1);
                             System.out.println(board2);
@@ -431,8 +564,6 @@ public class Logic {
                             String d;
                             System.out.println("number of minion");
                             s = scan.nextLine();
-                            System.out.println("choose a hero to be attacked /heroName/");
-                            d = scan.nextLine();
                             fight.attackHero((Minion) board1.get(Integer.parseInt(s)), hero2);
                             System.out.println(hero2.getHeroName() + "'s hp: " + hero2.getHealth());
                             System.out.println("-----------------------------");

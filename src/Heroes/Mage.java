@@ -8,7 +8,6 @@ public class Mage extends Hero{
         super(heroName);
     }
 
-    @Override
     public void heroPower(Object object) {
         //minion
         if(object.getClass() == Minion.class){

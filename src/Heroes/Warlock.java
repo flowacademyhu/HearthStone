@@ -6,7 +6,6 @@ public class Warlock extends Hero {
         super(heroName);
     }
 
-    @Override
     public void heroPower(Object object) {
 
     }
