@@ -6,11 +6,21 @@ public abstract class Hero extends JButton {
 
     private String heroName;
     private int health;
+    private boolean immune;
     //TODO private int armor;
 
-    public Hero(String heroName) {
+    public Hero(String heroName, boolean immune) {
         this.heroName = heroName;
         this.health = 1;
+        this.immune = immune;
+    }
+
+    public boolean isImmune() {
+        return immune;
+    }
+
+    public void setImmune(boolean immune) {
+        this.immune = immune;
     }
 
     public String getHeroName() {

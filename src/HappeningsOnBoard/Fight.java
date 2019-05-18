@@ -25,12 +25,7 @@ public class Fight {
     //minion dies
     public List<Minion> isMinionDied(List<Minion> board){
 
-        /*for (Minion minion : board) {
-            if(minion.getHealth()>=0){
-                board.remove(minion);
-                System.out.println(minion + "died");
-            }
-        }*/
+        //TODO rosszat töröl pl.: 2 minion küzöl az első hal a másodikat törli, 1 minionnál nem működik
 
         ListIterator<Minion> listIterator = board.listIterator();
 

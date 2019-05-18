@@ -11,8 +11,9 @@ import java.awt.event.MouseListener;
 
 public class Priest extends Hero {
 
-    public Priest(String heroName) {
-        super(heroName);
+    public Priest(String heroName, boolean immune) {
+
+        super(heroName, immune);
     }
 
     //heals 2

@@ -27,8 +27,8 @@ public class Board extends JFrame {
 
     private Deck deck = new Deck();
 
-    private Hero hero1 = new Mage("Mage");
-    private Hero hero2 = new Priest("Priest");
+    private Hero hero1 = new Mage("Mage", false);
+    private Hero hero2 = new Priest("Priest", false);
 
     private List<Card> deck1 = new ArrayList<>(deck.deckBuilder());
     private List<Card> deck2 = new ArrayList<>(deck.deckBuilder());

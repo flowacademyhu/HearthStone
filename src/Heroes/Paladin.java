@@ -7,8 +7,9 @@ import java.util.List;
 
 public class Paladin extends Hero{
 
-    public Paladin(String heroName) {
-        super(heroName);
+    public Paladin(String heroName, boolean immune) {
+
+        super(heroName, immune);
     }
 
     public void heroPower(Object object) {

@@ -26,23 +26,19 @@ public class SpellEffects {
                 board.get(i - 1).setHealth(board.get(i - 1).getHealth() + 1);
                 board.get(i - 1).setAttack(board.get(i - 1).getAttack() + 1);
 
-
             } else if (i != 0) {
 
                 board.get(i - 1).setAttack(board.get(i - 1).getAttack() + 1);
                 board.get(i - 1).setHealth(board.get(i - 1).getHealth() + 1);
 
-
                 board.get(i + 1).setHealth(board.get(i + 1).getHealth() + 1);
                 board.get(i + 1).setAttack(board.get(i + 1).getAttack() + 1);
-
 
             } //else if (board.size() == 1) { }
             else {
 
                 board.get(i + 1).setHealth(board.get(i + 1).getHealth() + 1);
                 board.get(i + 1).setAttack(board.get(i + 1).getAttack() + 1);
-
 
             }
         } catch (IndexOutOfBoundsException e) {
@@ -92,6 +88,6 @@ public class SpellEffects {
     }
 
     public void saveTheHero(Hero hero) {
-        //TODO
+         hero.setImmune(true);
     }
 }
