@@ -1,10 +1,7 @@
 package Logic;
 
+import Cards.*;
 import HappeningsOnBoard.Fight;
-import Cards.Card;
-import Cards.Minion;
-import Cards.Spell;
-import Cards.SpellEffects;
 import Heroes.*;
 import Player.Deck;
 import Player.Player;
@@ -41,6 +38,7 @@ public class Logic {
     Hand hand = new Hand();
 
     SpellEffects spell = new SpellEffects();
+    MinionEffects minion = new MinionEffects();
 
     Deck deck = new Deck();
     private List<Card> deck1 = new ArrayList<>(deck.deckBuilder());
@@ -340,9 +338,38 @@ public class Logic {
 
                         //play minion
                         if (hand1.get(Integer.parseInt(s)) instanceof Minion && hand1.get(Integer.parseInt(s)).getCost() <= mana) {
-                            hand.addCardToBoard(board1, (Minion) hand1.get(Integer.parseInt(s)));
                             //battlecry
-                            //if ()
+                            if (hand1.get(Integer.parseInt(s)).getDescription().equals("battlecry: gets +1/+1 after every unit")) {
+                                minion.addPlus1Plus1((Minion)hand1.get(Integer.parseInt(s)), board1, board2);
+                            } else if (hand1.get(Integer.parseInt(s)).getDescription().equals("battlecry: silences a minion")) {
+                                if (!board2.isEmpty() && !board1.isEmpty()) {
+                                    //TODO write ifs, the method is ready
+                                    //minion.silence();
+                                }
+                            } else if (hand1.get(Integer.parseInt(s)).getDescription().equals("battlecry: gets +1/+1 after every friendly unit")) {
+                                minion.addPlus1Plus1AfterFriendly((Minion) hand1.get(Integer.parseInt(s)), board1);
+                            } else if (hand1.get(Integer.parseInt(s)).getDescription().equals("battlecry: gives 4 hp")) {
+                                //TODO write ifs, the method is ready
+                                //if target is a minion
+                                //minion.add4HPMinion();
+                                //if target is a hero
+                                //minion.add4HpHero();
+                            } else if (hand1.get(Integer.parseInt(s)).getDescription().equals("battlecry: draws 2 cards")) {
+
+                                List<Card> drawedCards = new ArrayList<>();
+                                drawedCards = deck.draw(2, drawedCards, deck1, hero1);
+
+                                System.out.println("DRAWED cards" + drawedCards);
+
+                                hand1.addAll(drawedCards);
+                            } else if (hand1.get(Integer.parseInt(s)).getDescription().equals("battlecry: gives 2 damage to every unit")) {
+                                //TODO iterator
+                                //minion.deal2();
+                            } else if (hand1.get(Integer.parseInt(s)).getDescription().equals("battlecry: destroys all minions above 3 damage")){
+                                //TODO iterator
+                                //minion.destroyAbove3();
+                            }
+                            hand.addCardToBoard(board1, (Minion) hand1.get(Integer.parseInt(s)));
                             mana -= ((Minion) hand1.get(Integer.parseInt(s))).getCost();
                             hand1.remove((Minion) hand1.get(Integer.parseInt(s)));
 

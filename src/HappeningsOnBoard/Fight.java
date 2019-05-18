@@ -23,7 +23,7 @@ public class Fight {
     }
 
     //minion dies
-    public List<Minion> isMinionDied(List<Minion> board){
+    public void isMinionDied(List<Minion> board){
 
         //TODO rosszat töröl pl.: 2 minion küzöl az első hal a másodikat törli, 1 minionnál nem működik
 
@@ -38,8 +38,5 @@ public class Fight {
 
             }
         }
-
-        return board;
-
     }
 }
