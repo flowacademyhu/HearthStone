@@ -1,6 +1,6 @@
 package Cards;
 
-import HappeningsOnBoard.Fight;
+import Actions.Fight;
 import Heroes.Hero;
 
 import java.util.List;

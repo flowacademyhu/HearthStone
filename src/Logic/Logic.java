@@ -1,11 +1,10 @@
 package Logic;
 
 import Cards.*;
-import HappeningsOnBoard.Fight;
+import Actions.Fight;
 import Heroes.*;
 import Player.Deck;
 import Player.Player;
-import Player.Hand;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,8 +33,6 @@ public class Logic {
 
     boolean gameEnded = false;
     boolean heroPowerUsed = false;
-
-    Hand hand = new Hand();
 
     SpellEffects spell = new SpellEffects();
     MinionEffects minion = new MinionEffects();
@@ -369,7 +366,7 @@ public class Logic {
                                 //TODO iterator
                                 //minion.destroyAbove3();
                             }
-                            hand.addCardToBoard(board1, (Minion) hand1.get(Integer.parseInt(s)));
+                            deck.addCardToBoard(board1, (Minion) hand1.get(Integer.parseInt(s)));
                             mana -= ((Minion) hand1.get(Integer.parseInt(s))).getCost();
                             hand1.remove((Minion) hand1.get(Integer.parseInt(s)));
 

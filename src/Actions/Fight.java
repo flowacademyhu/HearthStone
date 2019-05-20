@@ -1,4 +1,4 @@
-package HappeningsOnBoard;
+package Actions;
 
 import Cards.Minion;
 import Heroes.Hero;
@@ -25,17 +25,25 @@ public class Fight {
     //minion dies
     public void isMinionDied(List<Minion> board){
 
-        //TODO rosszat töröl pl.: 2 minion küzöl az első hal a másodikat törli, 1 minionnál nem működik
+        if(board.size() == 1 && board.get(0).getHealth() <= 0) {
+            board.remove(0);
 
-        ListIterator<Minion> listIterator = board.listIterator();
+            System.out.println(board.get(0).getName() + " died");
+        } else {
 
-        while(listIterator.hasNext()) {
-            if(listIterator.next().getHealth() <= 0){
+            ListIterator<Minion> listIterator = board.listIterator();
 
-                System.out.println(listIterator.next() + "died");
+            while (listIterator.hasNext()) {
 
-                listIterator.remove();
+                Minion minion = listIterator.next();
 
+                if (minion.getHealth() <= 0) {
+
+                    System.out.println(minion.getName() + " died");
+
+                    listIterator.remove();
+
+                }
             }
         }
     }

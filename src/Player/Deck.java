@@ -2,6 +2,7 @@ package Player;
 
 import Cards.Card;
 import Cards.CardList;
+import Cards.Minion;
 import Heroes.Hero;
 
 import java.util.ArrayList;
@@ -51,6 +52,11 @@ public class Deck {
 
         return hand;
 
+    }
+
+    //put minion on board
+    public void addCardToBoard(List<Minion> board, Minion minion) {
+        board.add(minion);
     }
 
 }

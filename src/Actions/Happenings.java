@@ -1,4 +1,4 @@
-package HappeningsOnBoard;
+package Actions;
 
 import Cards.Minion;
 import Heroes.*;

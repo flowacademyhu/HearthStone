@@ -1,12 +1,11 @@
 package Logic;
 
 import Cards.*;
-import HappeningsOnBoard.Fight;
+import Actions.Fight;
 import Heroes.*;
 import Player.*;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
@@ -14,9 +13,6 @@ import java.util.concurrent.TimeUnit;
 public class LogicRefactor {
 
     Scanner scan = new Scanner(System.in);
-
-    boolean start = true;
-    boolean start2 = true;
 
     Player player1;
     Player player2;
@@ -36,8 +32,6 @@ public class LogicRefactor {
     boolean gameEnded = false;
     boolean heroPowerUsed = false;
 
-    Hand hand = new Hand();
-
     SpellEffects spell = new SpellEffects();
     MinionEffects minion = new MinionEffects();
 
@@ -55,7 +49,7 @@ public class LogicRefactor {
 
     String s;
 
-    public void startTheGame() {
+    public LogicRefactor() {
 
             System.out.println("choose hero");
 
@@ -65,19 +59,14 @@ public class LogicRefactor {
 
             if (s.equals("Hunter")) {
                 hero1 = new Hunter("Hunter", false);
-                start = false;
             } else if (s.equals("Mage")) {
                 hero1 = new Mage("Mage", false);
-                start = false;
             } else if (s.equals("Paladin")) {
                 hero1 = new Paladin("Paladin", false);
-                start = false;
             } else if (s.equals("Priest")) {
                 hero1 = new Priest("Priest", false);
-                start = false;
             } else if (s.equals("Warlock")) {
                 hero1 = new Warlock("Warlock", false);
-                start = false;
             } else {
                 System.out.println("nincs ilyen hero");
                 s = scan.nextLine();
@@ -91,19 +80,14 @@ public class LogicRefactor {
 
             if (s.equals("Hunter")) {
                 hero2 = new Hunter("Hunter", false);
-                start2 = false;
             } else if (s.equals("Mage")) {
                 hero2 = new Mage("Mage", false);
-                start2 = false;
             } else if (s.equals("Paladin")) {
                 hero2 = new Paladin("Paladin", false);
-                start2 = false;
             } else if (s.equals("Priest")) {
                 hero2 = new Priest("Priest", false);
-                start2 = false;
             } else if (s.equals("Warlock")) {
                 hero2 = new Warlock("Warlock", false);
-                start2 = false;
             } else {
                 System.out.println("nincs ilyen hero");
                 s = scan.nextLine();
@@ -179,6 +163,7 @@ public class LogicRefactor {
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
+                    heroPowerUsed = false;
                     endTurn = true;
                 }
 
@@ -376,7 +361,7 @@ public class LogicRefactor {
                             //TODO iterator
                             //minion.destroyAbove3();
                         }
-                        hand.addCardToBoard(player.getBoard(), (Minion) player.getHand().get(Integer.parseInt(s)));
+                        deck.addCardToBoard(player.getBoard(), (Minion) player.getHand().get(Integer.parseInt(s)));
                         mana -= ((Minion) player.getHand().get(Integer.parseInt(s))).getCost();
                         player.getHand().remove((Minion) player.getHand().get(Integer.parseInt(s)));
 

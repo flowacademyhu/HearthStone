@@ -6,8 +6,6 @@ import Heroes.Hero;
 
 import java.util.List;
 
-//TODO do I need this?? player1 and player2??? (for turns)
-
 public class Player {
 
     private List<Card> deck;
