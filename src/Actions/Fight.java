@@ -40,4 +40,35 @@ public class Fight {
             }
         }
     }
+
+    //taunt finder
+    public boolean isThereTaunt(List<Minion> board) {
+
+        for (Minion minion : board) {
+            if (minion.getEffect().equals("taunt")) {
+                return true;
+            }
+        }
+
+        return false;
+
+    }
+
+    //make minions "can attack"
+    public void makeCanAttack(List<Minion> board) {
+
+        for (Minion minion : board) {
+            minion.setCanAttack(true);
+        }
+
+    }
+
+    //make minions "can not attack"
+    public void makeCanNotAttack(List<Minion> board) {
+
+        for (Minion minion : board) {
+            minion.setCanAttack(false);
+        }
+
+    }
 }

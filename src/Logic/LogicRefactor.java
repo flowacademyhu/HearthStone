@@ -148,6 +148,8 @@ public class LogicRefactor {
 
                 //press endturn
                 if(s.equals("endturn")) {
+                    fight.makeCanNotAttack(player.getBoard());
+                    fight.makeCanAttack((otherPlayer.getBoard()));
                     if (isPlayer1Turn){
                         isPlayer1Turn = false;
                         isPlayer2Turn = true;
@@ -571,7 +573,13 @@ public class LogicRefactor {
                         System.out.println("choose a minion (number) to be attacked");
                         d = scan.nextLine();
 
-                        if (otherPlayer.getBoard().contains((Minion) otherPlayer.getBoard().get(Integer.parseInt(d)))) {
+                        if (otherPlayer.getBoard().contains((Minion) otherPlayer.getBoard().get(Integer.parseInt(d))) && fight.isThereTaunt(otherPlayer.getBoard()) && otherPlayer.getBoard().get(Integer.parseInt(d)).getEffect().equals("taunt")) {
+                            player.getBoard().get(Integer.parseInt(s)).setCanAttack(false);
+                            fight.attackMinion((Minion) player.getBoard().get(Integer.parseInt(s)), (Minion) otherPlayer.getBoard().get(Integer.parseInt(d)));
+                            fight.isMinionDied(player.getBoard());
+                            fight.isMinionDied(otherPlayer.getBoard());
+                        }
+                        else if (otherPlayer.getBoard().contains((Minion) otherPlayer.getBoard().get(Integer.parseInt(d))) && !fight.isThereTaunt(otherPlayer.getBoard())) {
                             player.getBoard().get(Integer.parseInt(s)).setCanAttack(false);
                             fight.attackMinion((Minion) player.getBoard().get(Integer.parseInt(s)), (Minion) otherPlayer.getBoard().get(Integer.parseInt(d)));
                             fight.isMinionDied(player.getBoard());
@@ -591,13 +599,13 @@ public class LogicRefactor {
                     String d;
                     System.out.println("number of minion");
                     s = scan.nextLine();
-                    if(player.getBoard().get(Integer.parseInt(s)).isCanAttack()) {
+                    if(player.getBoard().get(Integer.parseInt(s)).isCanAttack() && !fight.isThereTaunt(otherPlayer.getBoard())) {
                         player.getBoard().get(Integer.parseInt(s)).setCanAttack(false);
                         fight.attackHero((Minion) player.getBoard().get(Integer.parseInt(s)), otherPlayer.getHero());
                         System.out.println(otherPlayer.getHero().getHeroName() + "'s hp: " + otherPlayer.getHero().getHealth());
                         System.out.println("-----------------------------");
                     } else {
-                        System.err.println("this minion can not attack this turn");
+                        System.err.println("this minion can not attack this turn cuz of taunt");
                     }
                 }
             }
