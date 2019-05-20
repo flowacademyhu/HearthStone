@@ -25,25 +25,18 @@ public class Fight {
     //minion dies
     public void isMinionDied(List<Minion> board){
 
-        if(board.size() == 1 && board.get(0).getHealth() <= 0) {
-            board.remove(0);
+        ListIterator<Minion> listIterator = board.listIterator();
 
-            System.out.println(board.get(0).getName() + " died");
-        } else {
+        while (listIterator.hasNext()) {
 
-            ListIterator<Minion> listIterator = board.listIterator();
+            Minion minion = listIterator.next();
 
-            while (listIterator.hasNext()) {
+            if (minion.getHealth() <= 0) {
 
-                Minion minion = listIterator.next();
+                System.out.println(minion.getName() + " died");
 
-                if (minion.getHealth() <= 0) {
+                listIterator.remove();
 
-                    System.out.println(minion.getName() + " died");
-
-                    listIterator.remove();
-
-                }
             }
         }
     }
