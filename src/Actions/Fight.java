@@ -33,8 +33,6 @@ public class Fight {
 
             if (minion.getHealth() <= 0) {
 
-                System.out.println(minion.getName() + " died");
-
                 listIterator.remove();
 
             }

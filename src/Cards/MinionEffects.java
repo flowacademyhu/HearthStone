@@ -68,13 +68,19 @@ public class MinionEffects {
         ListIterator<Minion> listIterator1 = board1.listIterator();
 
         while(listIterator1.hasNext()) {
-            listIterator1.next().setHealth(listIterator1.next().getHealth() - 2);
+
+            Minion minion = listIterator1.next();
+
+            minion.setHealth(minion.getHealth() - 2);
         }
 
         ListIterator<Minion> listIterator2 = board2.listIterator();
 
         while(listIterator2.hasNext()) {
-            listIterator2.next().setHealth(listIterator2.next().getHealth() - 2);
+
+            Minion minion = listIterator2.next();
+
+            minion.setHealth(minion.getHealth() - 2);
         }
 
         fight.isMinionDied(board1);
@@ -87,8 +93,10 @@ public class MinionEffects {
 
         while(listIterator1.hasNext()) {
 
-            if (listIterator1.next().getAttack() > 3) {
-                //remove minion from board
+            Minion minion = listIterator1.next();
+
+            if (minion.getAttack() > 3) {
+                listIterator1.remove();
             }
         }
 
@@ -96,8 +104,10 @@ public class MinionEffects {
 
         while(listIterator2.hasNext()) {
 
-            if (listIterator2.next().getAttack() > 3) {
-                //remove minion from board
+            Minion minion = listIterator2.next();
+
+            if (minion.getAttack() > 3) {
+                listIterator2.remove();
             }
 
         }
