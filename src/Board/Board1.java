@@ -196,6 +196,22 @@ public class Board1 extends JFrame {
 
     private void update() {
 
+        for (int i = logic.getPlayer().getHand().size(); i < 10; i++) {
+            handButtons1.get(i).setVisible(false);
+        }
+
+        for (int i = logic.getOtherPlayer().getHand().size(); i < 10; i++) {
+            handButtons2.get(i).setVisible(false);
+        }
+
+        for (int i = logic.getPlayer().getBoard().size(); i < 5; i++) {
+            boardButtons1.get(i).setVisible(false);
+        }
+
+        for (int i = logic.getOtherPlayer().getBoard().size(); i < 5; i++) {
+            boardButtons2.get(i).setVisible(false);
+        }
+
         for (int i = 0; i < logic.getPlayer().getHand().size(); i++) {
             if(logic.getPlayer().getHand().get(i) instanceof Minion) {
                 handButtons1.get(i).setText("Minion " + logic.getPlayer().getHand().get(i).getCost() + " " + logic.getPlayer().getHand().get(i).getName() + " " + logic.getPlayer().getHand().get(i).getDescription() + " " + ((Minion) logic.getPlayer().getHand().get(i)).getAttack() + " " + ((Minion) logic.getPlayer().getHand().get(i)).getHealth());
@@ -217,7 +233,7 @@ public class Board1 extends JFrame {
             boardButtons2.get(i).setVisible(true);
         }
         playerHero1Button.setText(logic.getPlayer().getHero().getHeroName() + " " + logic.getPlayer().getHero().getHealth());
-        playerHero2Button.setText(logic.getOtherPlayer().getHero().getHeroName() + " " + logic.getPlayer().getHero().getHealth());
+        playerHero2Button.setText(logic.getOtherPlayer().getHero().getHeroName() + " " + logic.getOtherPlayer().getHero().getHealth());
         mana.setText("Mana: " + logic.getMana());
 
     }
