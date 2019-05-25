@@ -2,18 +2,29 @@ package Actions;
 
 import Cards.Minion;
 import Heroes.Hero;
+import Logic.LogicRefactor2;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 
 public class Fight {
 
+    Happenings happenings = new Happenings();
+    List<String> steps = new ArrayList<>();
+
+    public List<String> getSteps() {
+        return steps;
+    }
+
+    public void setSteps(List<String> steps) {
+        this.steps = steps;
+    }
+
     //minion vs minion
     public void attackMinion(Minion minionAttack, Minion minionDef) {
         minionAttack.setHealth(minionAttack.getHealth() - minionDef.getAttack());
         minionDef.setHealth(minionDef.getHealth() - minionAttack.getAttack());
-        /*minionAttack.setText(minionAttack.getCost() + "/" + minionAttack.getName() + "/" + minionAttack.getAttack() + "/" + minionAttack.getHealth());
-        minionDef.setText(minionDef.getCost() + "/" + minionDef.getName() + "/" + minionDef.getAttack() + "/" + minionDef.getHealth());*/
     }
 
     //minion vs hero
@@ -34,6 +45,7 @@ public class Fight {
             if (minion.getHealth() <= 0) {
 
                 listIterator.remove();
+                steps.add(happenings.whatHappenedMinionKill(minion));
 
             }
         }

@@ -37,18 +37,24 @@ public class Deck {
     }
 
     //draws x cards || if deck is empty, damages the hero || burns card if you have 10 cards
-    public List<Card> draw(int number, List<Card>  hand,List<Card> deck, Hero hero) {
+    public List<Card> draw(int number, List<Card>  hand, List<Card> deck, Hero hero) {
+
+        System.out.println("hand: " + hand.size());
 
         for (int i = 0; i < number; i++) {
             if(deck.size() > 0 && hand.size() == 10) {
+                System.out.println("I'm here");
                 deck.remove(0);
-            } else if (deck.size() > 0) {
+            } else if (deck.size() > 0 && hand.size() < 10) {
+                System.out.println("lalalala");
                 hand.add(deck.get(0));
                 deck.remove(0);
             } else {
                 hero.setHealth(hero.getHealth() - 1);
             }
         }
+
+        System.out.println("hand: "+hand.size());
 
         return hand;
 

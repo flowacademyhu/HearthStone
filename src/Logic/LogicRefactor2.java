@@ -1,11 +1,11 @@
 package Logic;
 
+import Actions.Happenings;
 import Cards.*;
 import Actions.Fight;
 import Heroes.*;
 import Player.*;
 
-import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -13,18 +13,14 @@ import java.util.concurrent.TimeUnit;
 
 public class LogicRefactor2 {
 
-    Scanner scan = new Scanner(System.in);
-
     Player player1;
     Player player2;
     Player player;
     Player otherPlayer;
 
-    boolean endTurn = false;
-
     int mana = 10;
 
-    Hero hero1 = new Hunter("Hunter", false);
+    Hero hero1 = new Warlock("Warlock", false);
     Hero hero2 = new Mage("Mage", false);
 
     boolean isPlayer1Turn = true;
@@ -35,6 +31,14 @@ public class LogicRefactor2 {
 
     boolean spellPressed = false;
     boolean minionPressed = false;
+    boolean heroPriestPressed = false;
+    boolean heroMagePressed = false;
+
+    int spellIndex;
+    int minionIndex;
+
+    boolean silenceActive = false;
+    boolean healActive = false;
 
     boolean holyblessing = false;
     boolean cavalry = false;
@@ -47,6 +51,8 @@ public class LogicRefactor2 {
     SpellEffects spell = new SpellEffects();
     MinionEffects minion = new MinionEffects();
 
+    List<String> steps = new ArrayList<>();
+
     Deck deck = new Deck();
     private List<Card> deck1 = new ArrayList<>(deck.deckBuilder());
     private List<Card> deck2 = new ArrayList<>(deck.deckBuilder());
@@ -58,6 +64,7 @@ public class LogicRefactor2 {
     private List<Minion> board2 = new ArrayList<>();
 
     Fight fight = new Fight();
+    Happenings happenings = new Happenings();
 
     String s;
 
@@ -77,7 +84,16 @@ public class LogicRefactor2 {
         player2 = new Player(deck2, hand2, board2, hero2);
     }
 
-    //Getters
+    //Getters, setters
+
+
+    public List<String> getSteps() {
+        return steps;
+    }
+
+    public void setSteps(List<String> steps) {
+        this.steps = steps;
+    }
 
     public int getMana() {
         return mana;
@@ -107,6 +123,38 @@ public class LogicRefactor2 {
         this.spellPressed = spellPressed;
     }
 
+    public boolean isHeroPriestPressed() {
+        return heroPriestPressed;
+    }
+
+    public void setHeroPriestPressed(boolean heroPriestPressed) {
+        this.heroPriestPressed = heroPriestPressed;
+    }
+
+    public boolean isHeroMagePressed() {
+        return heroMagePressed;
+    }
+
+    public void setHeroMagePressed(boolean heroMagePressed) {
+        this.heroMagePressed = heroMagePressed;
+    }
+
+    public boolean isSilenceActive() {
+        return silenceActive;
+    }
+
+    public void setSilenceActive(boolean silenceActive) {
+        this.silenceActive = silenceActive;
+    }
+
+    public boolean isHealActive() {
+        return healActive;
+    }
+
+    public void setHealActive(boolean healActive) {
+        this.healActive = healActive;
+    }
+
     //change player
     public void changePlayer() {
         if (isPlayer1Turn) {
@@ -116,23 +164,37 @@ public class LogicRefactor2 {
             player = player2;
             otherPlayer = player1;
         }
-        endTurn = false;
+        steps.add("------------");
+        steps.add(happenings.nextTurn(player.getHero()));
+        steps.add("------------");
     }
 
     //endGame
-    public boolean endGame() {
+    public void endGame() {
         if (player2.getHero().getHealth() <= 0) {
-            endTurn = true;
+            System.out.println("111111");
             isPlayer1Turn = false;
             isPlayer2Turn = false;
-            return true;
+
+            steps.add("------------");
+            steps.add(happenings.endGame(player1.getHero()));
+            steps.add("------------");
+
+            fight.makeCanNotAttack(player.getBoard());
+            mana = 0;
+
         } else if (player1.getHero().getHealth() <= 0) {
-            endTurn = true;
+            System.out.println("222222");
             isPlayer1Turn = false;
             isPlayer2Turn = false;
-            return true;
+
+            steps.add("------------");
+            steps.add(happenings.endGame(player2.getHero()));
+            steps.add("------------");
+
+            fight.makeCanNotAttack(player.getBoard());
+            mana = 0;
         }
-        return false;
     }
 
     //press endturn
@@ -146,6 +208,15 @@ public class LogicRefactor2 {
             isPlayer2Turn = false;
             isPlayer1Turn = true;
         }
+
+        List<Card> drawedCards = new ArrayList<>();
+        drawedCards = deck.draw(1, drawedCards, otherPlayer.getDeck(), otherPlayer.getHero());
+        otherPlayer.getHand().addAll(drawedCards);
+
+        for (Minion minion : otherPlayer.getBoard()){
+            minion.setCanAttack(true);
+        }
+
         player.getHero().setImmune(false);
         mana = 10;
         try {
@@ -165,12 +236,11 @@ public class LogicRefactor2 {
 
             } else if (player.getHero().toString().equals("Priest")) {
 
-                player.getHero().heroPower(player.getBoard().get(Integer.parseInt(s)));
+                heroPriestPressed = true;
 
             } else if (player.getHero().toString().equals("Mage")) {
 
-                player.getHero().heroPower(player.getBoard().get(Integer.parseInt(s)));
-                fight.isMinionDied(player.getBoard());
+                heroMagePressed = true;
 
             } else if (player.getHero().toString().equals("Paladin")) {
 
@@ -183,34 +253,98 @@ public class LogicRefactor2 {
                 List<Card> drawedCards = new ArrayList<>();
                 drawedCards = deck.draw(2, drawedCards, player.getDeck(), player.getHero());
                 player.getHand().addAll(drawedCards);
-
             }
+            steps.add(happenings.whatHappenedHero(player.getHero()));
             heroPowerUsed = true;
             mana -= 2;
         }
     }
 
+    public void mageDamagesMyMinion(int i) {
+        player.getBoard().get(i).setHealth(player.getBoard().get(i).getHealth() - 1);
+        steps.add(happenings.whatHappenedMageOrPriest(player.getHero(), player.getBoard().get(i)));
+        fight.isMinionDied(player.getBoard());
+        steps.addAll(fight.getSteps());
+        fight.setSteps(new ArrayList<>());
+        heroMagePressed = false;
+    }
+
+    public void mageDamagesEnemyMinion(int i) {
+        otherPlayer.getBoard().get(i).setHealth(otherPlayer.getBoard().get(i).getHealth() - 1);
+        steps.add(happenings.whatHappenedMageOrPriest(player.getHero(), otherPlayer.getBoard().get(i)));
+        fight.isMinionDied(otherPlayer.getBoard());
+        steps.addAll(fight.getSteps());
+        fight.setSteps(new ArrayList<>());
+        heroMagePressed = false;
+    }
+
+    public void mageDamagesMyHero() {
+        player.getHero().setHealth(player.getHero().getHealth() - 1);
+        steps.add(happenings.whatHappenedMageOrPriest(player.getHero(), player.getHero()));
+        heroMagePressed = false;
+    }
+
+    public void mageDamagesEnemyHero() {
+        otherPlayer.getHero().setHealth(otherPlayer.getHero().getHealth() - 1);
+        steps.add(happenings.whatHappenedMageOrPriest(player.getHero(), otherPlayer.getHero()));
+        heroMagePressed = false;
+    }
+
+    public void priestHealsMyMinion(int i) {
+        if(player.getBoard().get(i).getMaxHealth() >= player.getBoard().get(i).getHealth() + 2) {
+            player.getBoard().get(i).setHealth(player.getBoard().get(i).getHealth() + 2);
+        } else if(player.getBoard().get(i).getMaxHealth() >= player.getBoard().get(i).getHealth() + 1) {
+            player.getBoard().get(i).setHealth(player.getBoard().get(i).getHealth() + 1);
+        }
+        steps.add(happenings.whatHappenedMageOrPriest(player.getHero(), player.getBoard().get(i)));
+        heroPriestPressed = false;
+    }
+
+    public void priestHealsEnemyMinion(int i) {
+        if(otherPlayer.getBoard().get(i).getMaxHealth() >= otherPlayer.getBoard().get(i).getHealth() + 2) {
+            otherPlayer.getBoard().get(i).setHealth(otherPlayer.getBoard().get(i).getHealth() + 2);
+        } else if(otherPlayer.getBoard().get(i).getMaxHealth() >= otherPlayer.getBoard().get(i).getHealth() + 1) {
+            otherPlayer.getBoard().get(i).setHealth(otherPlayer.getBoard().get(i).getHealth() + 1);
+        }
+        steps.add(happenings.whatHappenedMageOrPriest(player.getHero(), otherPlayer.getBoard().get(i)));
+        heroPriestPressed = false;
+    }
+
+    public void priestHealsMyHero() {
+        if (player.getHero().getHealth() < 29) {
+            player.getHero().setHealth(player.getHero().getHealth() + 2);
+        } else if (player.getHero().getHealth() == 29) {
+            player.getHero().setHealth(player.getHero().getHealth() + 1);
+        }
+        steps.add(happenings.whatHappenedMageOrPriest(player.getHero(), player.getHero()));
+        heroPriestPressed = false;
+    }
+
+    public void priestHealsEnemyHero() {
+        if (otherPlayer.getHero().getHealth() < 29) {
+            otherPlayer.getHero().setHealth(otherPlayer.getHero().getHealth() + 2);
+        } else if (otherPlayer.getHero().getHealth() == 29) {
+            otherPlayer.getHero().setHealth(otherPlayer.getHero().getHealth() + 1);
+        }
+        steps.add(happenings.whatHappenedMageOrPriest(player.getHero(), otherPlayer.getHero()));
+        heroPriestPressed = false;
+    }
+
 
     //play card
     public void playCard(int i) {
+        minionIndex = i;
         //play minion
-        if (player.getHand().get(i).getClass() == Minion.class && player.getHand().get(i).getCost() <= mana && player.getBoard().size() < 5) {
+        if (player.getHand().get(i).getClass() == Minion.class && player.getHand().get(i).getCost() <= mana && player.getBoard().size() < 5 && !player.getHand().get(i).getDescription().equals("battlecry: silences a minion") && !player.getHand().get(i).getDescription().equals("battlecry: gives 4 hp")) {
             //battlecry
             if (player.getHand().get(i).getDescription().equals("battlecry: gets +1/+1 after every unit")) {
+
                 minion.addPlus1Plus1((Minion) player.getHand().get(i), player.getBoard(), otherPlayer.getBoard());
-            } else if (player.getHand().get(i).getDescription().equals("battlecry: silences a minion")) {
-                if (!otherPlayer.getBoard().isEmpty() && !player.getBoard().isEmpty()) {
-                    //TODO write ifs, the method is ready
-                    //minion.silence();
-                }
+
             } else if (player.getHand().get(i).getDescription().equals("battlecry: gets +1/+1 after every friendly unit")) {
+
                 minion.addPlus1Plus1AfterFriendly((Minion) player.getHand().get(i), player.getBoard());
-            } else if ((player.getHand().get(i).getDescription().equals("battlecry: gives 4 hp"))) {
-                //TODO write ifs, the method is ready
-                //if target is a minion
-                //minion.add4HPMinion();
-                //if target is a hero
-                //minion.add4HpHero();
+
             } else if ((player.getHand().get(i).getDescription().equals("battlecry: draws 2 cards"))) {
 
                 List<Card> drawedCards = new ArrayList<>();
@@ -228,35 +362,131 @@ public class LogicRefactor2 {
             }
             deck.addCardToBoard(player.getBoard(), (Minion) player.getHand().get(i));
             mana -= player.getHand().get(i).getCost();
+            steps.add(happenings.whatHappenedMinion((Minion)player.getHand().get(i)));
             player.getHand().remove(player.getHand().get(i));
 
-            //play spell
-        } else if (player.getHand().get(i) instanceof Spell && player.getHand().get(i).getCost() <= mana) {
+
+        }
+        else if ((player.getHand().get(i).getDescription().equals("battlecry: gives 4 hp"))) {
+
+                if (!otherPlayer.getBoard().isEmpty() && !player.getBoard().isEmpty()) {
+
+                    healActive = true;
+                    minionIndex = i;
+
+                } else {
+                    deck.addCardToBoard(player.getBoard(), (Minion) player.getHand().get(i));
+                    mana -= player.getHand().get(i).getCost();
+                    player.getHand().remove(player.getHand().get(i));
+                }
+            } else if (player.getHand().get(i).getDescription().equals("battlecry: silences a minion")) {
+                if (!otherPlayer.getBoard().isEmpty() && !player.getBoard().isEmpty()) {
+
+                    silenceActive = true;
+                    minionIndex = i;
+
+                } else {
+                    deck.addCardToBoard(player.getBoard(), (Minion) player.getHand().get(i));
+                    mana -= player.getHand().get(i).getCost();
+                    player.getHand().remove(player.getHand().get(i));
+                }
+            }
+        //play spell
+        else if (player.getHand().get(i) instanceof Spell && player.getHand().get(i).getCost() <= mana) {
 
             spellPressed = true;
+            spellIndex = i;
 
             if(((Spell) player.getHand().get(i)).getEffect().equals("holyblessing")) {
                 holyblessing = true;
+                System.out.println("a");
             } else if (((Spell) player.getHand().get(i)).getEffect().equals("cavalry")) {
                 cavalry = true;
+                System.out.println("b");
             } else if (((Spell) player.getHand().get(i)).getEffect().equals("flee")){
                 flee = true;
+                System.out.println("c");
             } else if  (((Spell) player.getHand().get(i)).getEffect().equals("traitor")){
                 traitor = true;
+                System.out.println("d");
             } else if (((Spell) player.getHand().get(i)).getEffect().equals("dragonfire")) {
                 dragonfire = true;
+                System.out.println("e");
             } else if (((Spell) player.getHand().get(i)).getEffect().equals("frostblast")) {
                 frostbalst = true;
+                System.out.println("f");
             } else if (((Spell) player.getHand().get(i)).getEffect().equals("savethehero")) {
                 savethehero = true;
+                System.out.println("g");
             }
 
+            steps.add(happenings.whatHappenedSpell((Spell)player.getHand().get(i)));
             mana -= ((Spell) player.getHand().get(i)).getCost();
         }
     }
 
+    public void silenceMyMinion(int i) {
+
+        deck.addCardToBoard(player.getBoard(), (Minion) player.getHand().get(minionIndex));
+        mana -= player.getHand().get(minionIndex).getCost();
+
+        minion.silence(player.getBoard().get(i));
+        player.getHand().remove(player.getHand().get(minionIndex));
+        silenceActive = false;
+    }
+
+    public void silenceEnemyMinion(int i) {
+
+        deck.addCardToBoard(player.getBoard(), (Minion) player.getHand().get(minionIndex));
+        mana -= player.getHand().get(minionIndex).getCost();
+
+        minion.silence(otherPlayer.getBoard().get(i));
+        player.getHand().remove(player.getHand().get(minionIndex));
+        silenceActive = false;
+    }
+
+    public  void healMyMinion(int i) {
+
+        deck.addCardToBoard(player.getBoard(), (Minion) player.getHand().get(minionIndex));
+        mana -= player.getHand().get(minionIndex).getCost();
+
+        minion.add4HPMinion(player.getBoard().get(i));
+        player.getHand().remove(player.getHand().get(minionIndex));
+        healActive = false;
+    }
+
+    public  void healEnemyMinion(int i) {
+
+        deck.addCardToBoard(player.getBoard(), (Minion) player.getHand().get(minionIndex));
+        mana -= player.getHand().get(minionIndex).getCost();
+
+        minion.add4HPMinion(otherPlayer.getBoard().get(i));
+        player.getHand().remove(player.getHand().get(minionIndex));
+        healActive = false;
+    }
+
+    public void healMyHero() {
+
+        deck.addCardToBoard(player.getBoard(), (Minion) player.getHand().get(minionIndex));
+        mana -= player.getHand().get(minionIndex).getCost();
+
+        minion.add4HpHero(player.getHero());
+        player.getHand().remove(player.getHand().get(minionIndex));
+        healActive = false;
+    }
+
+    public void healEnemyHero() {
+
+        deck.addCardToBoard(player.getBoard(), (Minion) player.getHand().get(minionIndex));
+        mana -= player.getHand().get(minionIndex).getCost();
+
+        minion.add4HpHero(otherPlayer.getHero());
+        player.getHand().remove(player.getHand().get(minionIndex));
+        healActive = false;
+    }
+
     public void castSpellOnOwnMinion(int i) {
-//TODO
+
                     if (holyblessing) {
 
                         spell.holyBlessing(i, player.getBoard());
@@ -271,14 +501,14 @@ public class LogicRefactor2 {
 
                     } else if (flee) {
 
-                        spell.flee(i, player.getBoard(), player.getHand());
                         player.getHand().remove(i);
+                        spell.flee(i, player.getBoard(), player.getHand());
                         flee = false;
 
                     } else if (traitor) {
 
-                        spell.traitor(i, player.getBoard(), otherPlayer.getBoard());
-                        player.getHand().remove(i);
+                        /*spell.traitor(i, player.getBoard(), otherPlayer.getBoard());
+                        player.getHand().remove(i);*/
                         traitor = false;
 
                     } else if (dragonfire) {
@@ -298,138 +528,127 @@ public class LogicRefactor2 {
     }
 
     public void castSpellOnEnemyMinion(int i) {
- //TODO otherplayer
+
         if (holyblessing) {
 
-            spell.holyBlessing(i, player.getBoard());
+            spell.holyBlessing(i, otherPlayer.getBoard());
             player.getHand().remove(i);
             holyblessing = false;
 
         } else if (cavalry) {
 
-            spell.cavalry(i, player.getBoard());
+            spell.cavalry(i, otherPlayer.getBoard());
             player.getHand().remove(i);
             cavalry = false;
 
         } else if (flee) {
 
-            spell.flee(i, player.getBoard(), player.getHand());
             player.getHand().remove(i);
+            spell.flee(i, otherPlayer.getBoard(), otherPlayer.getHand());
             flee = false;
 
         } else if (traitor) {
 
-            spell.traitor(i, player.getBoard(), otherPlayer.getBoard());
+            spell.traitor(i, otherPlayer.getBoard(), player.getBoard());
             player.getHand().remove(i);
             traitor = false;
 
         } else if (dragonfire) {
 
-            spell.dragonFireMinion(i, player.getBoard());
+            spell.dragonFireMinion(i, otherPlayer.getBoard());
             player.getHand().remove(i);
             dragonfire = false;
 
         } else if (frostbalst) {
 
-            spell.frostBlast(i, player.getBoard());
+            spell.frostBlast(i, otherPlayer.getBoard());
             player.getHand().remove(i);
             frostbalst = false;
         }
 
         spellPressed = false;
     }
-/*
-    public void castSpellOnHero() {
 
-                System.out.println("which hero? /1/2/");
+    public void castSpellOnMyHero() {
 
-                b = scan.nextLine();
+        if (dragonfire) {
 
-                if (b.equals("1")) {
+            spell.dragonFireHero(player.getHero(), gameEnded);
+            dragonfire = false;
+            player.getHand().remove(player.getHand().get(spellIndex));
 
-                    if (((Spell) player.getHand().get(Integer.parseInt(s))).getEffect().equals("dragonfire")) {
+        } else if (savethehero) {
 
-                        spell.dragonFireHero(player.getHero(), gameEnded);
+            spell.saveTheHero(player.getHero());
+            savethehero = false;
+            player.getHand().remove(player.getHand().get(spellIndex));
 
-                        System.out.println("-----------------------------");
-                        System.out.println(player.getHero());
-                        System.out.println(player.getHero().getHealth());
-                        System.out.println("-----------------------------");
-
-                    } else if (((Spell) player.getHand().get(Integer.parseInt(s))).getEffect().equals("savethehero")) {
-
-                        spell.saveTheHero(player.getHero());
-
-                        System.out.println("-----------------------------");
-                        System.out.println(player.getHero());
-                        System.out.println("-----------------------------");
-                    }
-                } else if (b.equals("2")) {
-
-                    if (((Spell) player.getHand().get(Integer.parseInt(s))).getEffect().equals("dragonfire")) {
-
-                        spell.dragonFireHero(otherPlayer.getHero(), gameEnded);
-
-                        System.out.println("-----------------------------");
-                        System.out.println(otherPlayer.getHero());
-                        System.out.println("-----------------------------");
-
-                    } else if (((Spell) player.getHand().get(Integer.parseInt(s))).getEffect().equals("savethehero")) {
-
-                        spell.saveTheHero(otherPlayer.getHero());
-
-                        System.out.println("-----------------------------");
-                        System.out.println(otherPlayer.getHero());
-                        System.out.println("-----------------------------");
-                    }
-                }
+        }
     }
-}
 
+        public void castSpellOnEnemyHero() {
 
-                //attack minion minion
-                if (s.equals("attackminion") && !player.getBoard().isEmpty() && !otherPlayer.getBoard().isEmpty()) {
-                    String d;
-                    System.out.println(player.getBoard());
-                    System.out.println("choose a minion (number) to attack with");
-                    s = scan.nextLine();
-                    if (player.getBoard().get(Integer.parseInt(s)).isCanAttack()) {
-                        System.out.println("choose a minion (number) to be attacked");
-                        d = scan.nextLine();
+            if (dragonfire) {
 
-                        if (otherPlayer.getBoard().contains((Minion) otherPlayer.getBoard().get(Integer.parseInt(d))) && fight.isThereTaunt(otherPlayer.getBoard()) && otherPlayer.getBoard().get(Integer.parseInt(d)).getEffect().equals("taunt")) {
-                            player.getBoard().get(Integer.parseInt(s)).setCanAttack(false);
-                            fight.attackMinion((Minion) player.getBoard().get(Integer.parseInt(s)), (Minion) otherPlayer.getBoard().get(Integer.parseInt(d)));
-                            fight.isMinionDied(player.getBoard());
-                            fight.isMinionDied(otherPlayer.getBoard());
-                        }
-                        else if (otherPlayer.getBoard().contains((Minion) otherPlayer.getBoard().get(Integer.parseInt(d))) && !fight.isThereTaunt(otherPlayer.getBoard())) {
-                            player.getBoard().get(Integer.parseInt(s)).setCanAttack(false);
-                            fight.attackMinion((Minion) player.getBoard().get(Integer.parseInt(s)), (Minion) otherPlayer.getBoard().get(Integer.parseInt(d)));
-                            fight.isMinionDied(player.getBoard());
-                            fight.isMinionDied(otherPlayer.getBoard());
-                        }
+                spell.dragonFireHero(otherPlayer.getHero(), gameEnded);
+                dragonfire = false;
+                player.getHand().remove(player.getHand().get(spellIndex));
 
+            } else if (savethehero) {
 
-                        System.out.println(player.getBoard());
-                        System.out.println(otherPlayer.getBoard());
-                        System.out.println("-----------------------------");
-                    } else {
-                        System.err.println("this minion can not attack this turn");
-                    }
-                }
-                //attack minion hero
-                if (s.equals("attackhero") && !otherPlayer.getHero().isImmune()) {
-                    String d;
-                    System.out.println("number of minion");
-                    s = scan.nextLine();
-                    if(player.getBoard().get(Integer.parseInt(s)).isCanAttack() && !fight.isThereTaunt(otherPlayer.getBoard())) {
-                        player.getBoard().get(Integer.parseInt(s)).setCanAttack(false);
-                        fight.attackHero((Minion) player.getBoard().get(Integer.parseInt(s)), otherPlayer.getHero());
-                        System.out.println(otherPlayer.getHero().getHeroName() + "'s hp: " + otherPlayer.getHero().getHealth());
-                        System.out.println("-----------------------------");
-                    } else {
-                        System.err.println("this minion can not attack this turn cuz of taunt");
-                    }
-                } */
-}
+                spell.saveTheHero(otherPlayer.getHero());
+                savethehero = false;
+                player.getHand().remove(player.getHand().get(spellIndex));
+
+            }
+        }
+
+        //attack minion
+        public void selectAttackerMinion(int i) {
+
+            if (player.getBoard().get(i).isCanAttack()) {
+
+                minionPressed = true;
+
+                minionIndex = i;
+
+            }
+
+        }
+
+        public void attackMinion(int i) {
+
+            if (otherPlayer.getBoard().contains(otherPlayer.getBoard().get(i)) && fight.isThereTaunt(otherPlayer.getBoard()) && otherPlayer.getBoard().get(i).getEffect().equals("taunt")) {
+                player.getBoard().get(minionIndex).setCanAttack(false);
+                fight.attackMinion((Minion) player.getBoard().get(minionIndex), (Minion) otherPlayer.getBoard().get(i));
+                steps.add(happenings.setWhatHappenedMinionAttack((Minion) player.getBoard().get(minionIndex), (Minion) otherPlayer.getBoard().get(i)));
+                fight.isMinionDied(player.getBoard());
+                fight.isMinionDied(otherPlayer.getBoard());
+                steps.addAll(fight.getSteps());
+                fight.setSteps(new ArrayList<>());
+            }
+            else if (otherPlayer.getBoard().contains((Minion) otherPlayer.getBoard().get(i)) && !fight.isThereTaunt(otherPlayer.getBoard())) {
+                player.getBoard().get(minionIndex).setCanAttack(false);
+                fight.attackMinion((Minion) player.getBoard().get(minionIndex), (Minion) otherPlayer.getBoard().get(i));
+                steps.add(happenings.setWhatHappenedMinionAttack((Minion) player.getBoard().get(minionIndex), (Minion) otherPlayer.getBoard().get(i)));
+                fight.isMinionDied(player.getBoard());
+                fight.isMinionDied(otherPlayer.getBoard());
+                steps.addAll(fight.getSteps());
+                fight.setSteps(new ArrayList<>());
+            }
+            minionPressed = false;
+        }
+
+        //attack hero
+        public void attackHero() {
+
+            if(!otherPlayer.getHero().isImmune() && !fight.isThereTaunt(otherPlayer.getBoard())) {
+
+                player.getBoard().get(minionIndex).setCanAttack(false);
+                steps.add(happenings.setWhatHappenedMinionAttack((Minion) player.getBoard().get(minionIndex), otherPlayer.getHero()));
+                fight.attackHero((Minion) player.getBoard().get(minionIndex), otherPlayer.getHero());
+
+            }
+            minionPressed = false;
+        }
+    }

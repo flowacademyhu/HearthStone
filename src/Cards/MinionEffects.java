@@ -21,8 +21,8 @@ public class MinionEffects {
 
     public void silence(Minion minion) {
 
-        if(minion.getDescription().equals("taunt")) {
-            minion.setDescription("");
+        if(minion.getEffect().equals("taunt")) {
+            minion.setEffect("");
         }
 
         minion.setAttack(minion.getBasicAttack());

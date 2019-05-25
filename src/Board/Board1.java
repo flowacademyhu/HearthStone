@@ -2,6 +2,7 @@ package Board;
 
 
 
+import Actions.Fight;
 import Cards.Card;
 import Cards.Minion;
 import Logic.LogicRefactor2;
@@ -28,13 +29,29 @@ public class Board1 extends JFrame {
     private List<JButton> boardButtons1 = boardButtonAdder();
     private List<JButton> boardButtons2 = boardButtonAdder();
 
+    private List<JLabel> steps = stepLabelAdder();
+
+    private List<JLabel> stepLabelAdder() {
+
+        List list = new ArrayList<>();
+
+        for(int i = 0; i < 100; i++) {
+
+            JLabel label = new JLabel();
+            label.setVisible(false);
+            list.add(label);
+        }
+
+        return list;
+    }
+
     private List<JButton> handButtonAdder() {
 
         List list = new ArrayList<>();
 
         for(int i = 0; i < 10; i++) {
 
-            JButton button = new JButton("hello");
+            JButton button = new JButton();
             button.setVisible(false);
             button.addActionListener((ActionEvent e) -> {
                 //TODO
@@ -55,16 +72,38 @@ public class Board1 extends JFrame {
 
         for(int i = 0; i < 5; i++) {
 
-            JButton button = new JButton("hello");
+            JButton button = new JButton();
             button.setVisible(false);
             button.addActionListener((ActionEvent e) -> {
                 //TODO
                 int index = list.indexOf(e.getSource());
                 if(logic.isSpellPressed() && boardButtons1.contains(e.getSource())) {
                     logic.castSpellOnOwnMinion(index);
-                } else {
+                } else if (logic.isSpellPressed() && boardButtons2.contains(e.getSource())){
                     logic.castSpellOnEnemyMinion(index);
+                } else if (logic.isHeroMagePressed() && boardButtons1.contains(e.getSource())) {
+                    logic.mageDamagesMyMinion(index);
+                } else if (logic.isHeroMagePressed() && boardButtons2.contains(e.getSource())) {
+                    logic.mageDamagesEnemyMinion(index);
+                } else if (logic.isHeroPriestPressed() && boardButtons1.contains(e.getSource())) {
+                    logic.priestHealsMyMinion(index);
+                } else if (logic.isHeroPriestPressed() && boardButtons2.contains(e.getSource())) {
+                    logic.priestHealsEnemyMinion(index);
+                } else if (logic.isSilenceActive() && boardButtons1.contains(e.getSource())) {
+                    logic.silenceMyMinion(index);
+                } else if (logic.isSilenceActive() && boardButtons2.contains(e.getSource())) {
+                    logic.silenceEnemyMinion(index);
+                } else if (logic.isHealActive() && boardButtons1.contains((e.getSource()))) {
+                    logic.healMyMinion(index);
+                } else if (logic.isHealActive() && boardButtons2.contains((e.getSource()))) {
+                    logic.healEnemyMinion(index);
+                } else if (!logic.isMinionPressed() && boardButtons1.contains(e.getSource())) {
+                    logic.selectAttackerMinion(index);
+                } else if (logic.isMinionPressed() && boardButtons2.contains(e.getSource())) {
+                    logic.attackMinion(index);
                 }
+                update();
+                logic.endGame();
                 update();
             });
             list.add(button);
@@ -97,13 +136,28 @@ public class Board1 extends JFrame {
 
         heroesAndEndTurn();
 
-        /*JPanel whatHappened = west();
-        add(whatHappened, BorderLayout.WEST);*/
+        JPanel whatHappened = commands();
+        add(whatHappened, BorderLayout.WEST);
 
         centerBoard();
 
         update();
 
+    }
+
+    private JPanel commands() {
+
+        JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS) );
+
+        JLabel commandTitle = new JLabel("Commands");
+
+        panel.add(commandTitle);
+
+        for (JLabel step: steps) {
+            panel.add(step);
+        }
+        return panel;
     }
 
     private JPanel hands(List<JButton> buttons) {
@@ -136,17 +190,38 @@ public class Board1 extends JFrame {
         mana.setHorizontalAlignment(JLabel.CENTER);
 
         playerHero1Button.addActionListener((ActionEvent e) -> {
-            //TODO
-          logic.heroPower();
-          update();
-          logic.endGame();
+
+            if(logic.isSpellPressed()){
+               logic.castSpellOnMyHero();
+            } else if (logic.isHeroMagePressed()){
+                logic.mageDamagesMyHero();
+            } else if (logic.isHeroPriestPressed()) {
+                logic.priestHealsMyHero();
+            } else if (logic.isHealActive()) {
+                logic.healMyHero();
+            } else {
+                logic.heroPower();
+            }
+            update();
+            logic.endGame();
+            update();
         });
 
         playerHero2Button.addActionListener((ActionEvent e) -> {
-            //TODO
-            logic.heroPower();
+            if(logic.isSpellPressed()){
+                logic.castSpellOnEnemyHero();
+            } else if (logic.isHeroMagePressed()){
+                logic.mageDamagesEnemyHero();
+            } else if (logic.isHeroPriestPressed()) {
+                logic.priestHealsEnemyHero();
+            }  else if (logic.isHealActive()) {
+                logic.healEnemyHero();
+            } else if (logic.isMinionPressed()) {
+                logic.attackHero();
+            }
             update();
             logic.endGame();
+            update();
         });
 
         endTurnButton.addActionListener((ActionEvent e) -> {
@@ -221,16 +296,20 @@ public class Board1 extends JFrame {
             handButtons1.get(i).setVisible(true);
         }
         for (int i = 0; i < logic.getOtherPlayer().getHand().size(); i++) {
-            handButtons2.get(i).setText("Secret");
+            handButtons2.get(i).setText("Opponent's Card");
             handButtons2.get(i).setVisible(true);
         }
         for (int i = 0; i < logic.getPlayer().getBoard().size(); i++) {
-            boardButtons1.get(i).setText(logic.getPlayer().getBoard().get(i).getName()+ " " + logic.getPlayer().getBoard().get(i).getDescription() + " " + ((Minion) logic.getPlayer().getBoard().get(i)).getAttack() + " " + ((Minion) logic.getPlayer().getBoard().get(i)).getHealth());
+            boardButtons1.get(i).setText(logic.getPlayer().getBoard().get(i).getName()+ " "  + ((Minion) logic.getPlayer().getBoard().get(i)).getAttack() + " " + ((Minion) logic.getPlayer().getBoard().get(i)).getHealth() + " " + logic.getPlayer().getBoard().get(i).getEffect());
             boardButtons1.get(i).setVisible(true);
         }
         for (int i = 0; i < logic.getOtherPlayer().getBoard().size(); i++) {
-            boardButtons2.get(i).setText(logic.getOtherPlayer().getBoard().get(i).getName()+ " " + logic.getOtherPlayer().getBoard().get(i).getDescription() + " " + logic.getOtherPlayer().getBoard().get(i).getAttack() + " " + logic.getOtherPlayer().getBoard().get(i).getHealth());
+            boardButtons2.get(i).setText(logic.getOtherPlayer().getBoard().get(i).getName()+ " " + logic.getOtherPlayer().getBoard().get(i).getAttack() + " " + logic.getOtherPlayer().getBoard().get(i).getHealth() + " " + logic.getOtherPlayer().getBoard().get(i).getEffect());
             boardButtons2.get(i).setVisible(true);
+        }
+        for (int i = 0; i < logic.getSteps().size(); i++) {
+            steps.get(i).setText(logic.getSteps().get(i));
+            steps.get(i).setVisible(true);
         }
         playerHero1Button.setText(logic.getPlayer().getHero().getHeroName() + " " + logic.getPlayer().getHero().getHealth());
         playerHero2Button.setText(logic.getOtherPlayer().getHero().getHeroName() + " " + logic.getOtherPlayer().getHero().getHealth());
