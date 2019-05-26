@@ -26,7 +26,10 @@ public class MinionEffects {
         }
 
         minion.setAttack(minion.getBasicAttack());
-        minion.setHealth(minion.getBasicHealth());
+
+        if(minion.getHealth() > minion.getBasicHealth()) {
+            minion.setHealth(minion.getBasicHealth());
+        }
 
     }
 

@@ -57,6 +57,7 @@ public class Board1 extends JFrame {
                 //TODO
                 if(handButtons1.contains(e.getSource())) {
                     int index = list.indexOf(e.getSource());
+                    System.out.println("KÉZBEN index     " + index);
                     logic.playCard(index);
                     update();
                 }
@@ -227,6 +228,12 @@ public class Board1 extends JFrame {
         endTurnButton.addActionListener((ActionEvent e) -> {
             logic.endTurn();
             logic.changePlayer();
+            //TODO whathappens thing
+            if (logic.getSteps().size() >= 40) {
+                for(int i = 0; i < logic.getSteps().size()/2 - 1; i++) {
+                    logic.getSteps().remove(i);
+                }
+            }
             update();
 
         });
