@@ -263,7 +263,7 @@ public class Logic {
                                 }
                             }
                             else if (hero1.toString().equals("Paladin")) {
-                                Minion recruit = new Minion("Recruit", "", 1, 1,1,1, 1, 1, false, "");
+                                Minion recruit = new Minion("Recruit", "", 1, 1,1,1, 1, 1, false, "", false);
                                 board1.add(recruit);
                             } else if ((hero1.toString().equals("Warlock"))) {
                                 hero1.setHealth(hero1.getHealth() - 2);

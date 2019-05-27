@@ -74,7 +74,7 @@ public class SpellEffects {
 
     public void frostBlast(int i, List<Minion> board) {
          //TODO
-        board.get(i).setCanAttack(false);
+        board.get(i).setFreezed(true);
     }
 
     //spells on hero

@@ -260,7 +260,7 @@ public class LogicRefactor {
                             }
                         }
                         else if (player.getHero().toString().equals("Paladin")) {
-                            Minion recruit = new Minion("Recruit", "", 1, 1,1,1, 1, 1, false, "");
+                            Minion recruit = new Minion("Recruit", "", 1, 1,1,1, 1, 1, false, "", false);
                             player.getBoard().add(recruit);
                         } else if ((player.getHero().toString().equals("Warlock"))) {
                             player.getHero().setHealth(player.getHero().getHealth() - 2);

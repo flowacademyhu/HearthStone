@@ -31,6 +31,12 @@ public class Board1 extends JFrame {
 
     private List<JLabel> steps = stepLabelAdder();
 
+    Border blackBorder = BorderFactory.createLineBorder(Color.BLACK, 3);
+    Border greenBorder = BorderFactory.createLineBorder(Color.GREEN, 3);
+    Border redBorder = BorderFactory.createLineBorder(Color.RED, 3);
+    Border blueBorder = BorderFactory.createLineBorder(Color.BLUE, 3);
+    Border greyBorder = BorderFactory.createLineBorder(Color.GRAY, 3);
+
     private List<JLabel> stepLabelAdder() {
 
         List list = new ArrayList<>();
@@ -57,7 +63,6 @@ public class Board1 extends JFrame {
                 //TODO
                 if(handButtons1.contains(e.getSource())) {
                     int index = list.indexOf(e.getSource());
-                    System.out.println("KÉZBEN index     " + index);
                     logic.playCard(index);
                     update();
                 }
@@ -179,15 +184,13 @@ public class Board1 extends JFrame {
 
         panel.setLayout(new GridLayout(4, 1));
 
-        Border manaBorder = BorderFactory.createLineBorder(Color.BLACK, 2);
-
         logic.changePlayer();
 
         playerHero1Button.setText(logic.getPlayer().getHero().getHeroName() + " " + logic.getPlayer().getHero().getHealth());
         playerHero2Button.setText(logic.getOtherPlayer().getHero().getHeroName() + " " + logic.getPlayer().getHero().getHealth());
         endTurnButton.setText("End turn");
-        mana.setText("Mana: " + logic.getMana());
-        mana.setBorder(manaBorder);
+        mana.setText("Mana: " + logic.getMana() + "Deck: " + logic.getPlayer().getDeck().size());
+        mana.setBorder(blackBorder);
         mana.setHorizontalAlignment(JLabel.CENTER);
 
         playerHero1Button.addActionListener((ActionEvent e) -> {
@@ -228,12 +231,6 @@ public class Board1 extends JFrame {
         endTurnButton.addActionListener((ActionEvent e) -> {
             logic.endTurn();
             logic.changePlayer();
-            //TODO whathappens thing
-            if (logic.getSteps().size() >= 40) {
-                for(int i = 0; i < logic.getSteps().size()/2 - 1; i++) {
-                    logic.getSteps().remove(i);
-                }
-            }
             update();
 
         });
@@ -278,6 +275,14 @@ public class Board1 extends JFrame {
 
     private void update() {
 
+        //TODO what happens
+        if(logic.getSteps().size() >= 50) {
+            for( String step : logic.getSteps() ) {
+                step = "";
+            }
+            logic.getSteps().clear();
+        }
+
         for (int i = logic.getPlayer().getHand().size(); i < 10; i++) {
             handButtons1.get(i).setVisible(false);
         }
@@ -296,9 +301,11 @@ public class Board1 extends JFrame {
 
         for (int i = 0; i < logic.getPlayer().getHand().size(); i++) {
             if(logic.getPlayer().getHand().get(i) instanceof Minion) {
-                handButtons1.get(i).setText("Minion " + logic.getPlayer().getHand().get(i).getCost() + " " + logic.getPlayer().getHand().get(i).getName() + " " + logic.getPlayer().getHand().get(i).getDescription() + " " + ((Minion) logic.getPlayer().getHand().get(i)).getAttack() + " " + ((Minion) logic.getPlayer().getHand().get(i)).getHealth());
+                handButtons1.get(i).setText(logic.getPlayer().getHand().get(i).getCost() + " " + logic.getPlayer().getHand().get(i).getName() + " " + ((Minion) logic.getPlayer().getHand().get(i)).getAttack() + " " + ((Minion) logic.getPlayer().getHand().get(i)).getHealth());
+                handButtons1.get(i).setToolTipText("Minion" + " " + logic.getPlayer().getHand().get(i).getDescription());
             } else {
-                handButtons1.get(i).setText("Spell " + logic.getPlayer().getHand().get(i).getCost() + " " + logic.getPlayer().getHand().get(i).getName() + " " + logic.getPlayer().getHand().get(i).getDescription());
+                handButtons1.get(i).setText("Spell " + logic.getPlayer().getHand().get(i).getCost() + " " + logic.getPlayer().getHand().get(i).getName());
+                handButtons1.get(i).setToolTipText("Spell" + " " + logic.getPlayer().getHand().get(i).getDescription());
             }
             handButtons1.get(i).setVisible(true);
         }
@@ -309,18 +316,42 @@ public class Board1 extends JFrame {
         for (int i = 0; i < logic.getPlayer().getBoard().size(); i++) {
             boardButtons1.get(i).setText(logic.getPlayer().getBoard().get(i).getName()+ " "  + ((Minion) logic.getPlayer().getBoard().get(i)).getAttack() + " " + ((Minion) logic.getPlayer().getBoard().get(i)).getHealth() + " " + logic.getPlayer().getBoard().get(i).getEffect());
             boardButtons1.get(i).setVisible(true);
+            if(logic.getPlayer().getBoard().get(i).isFreezed()){
+                boardButtons1.get(i).setBorder(blueBorder);
+            } else if (logic.getPlayer().getBoard().get(i).getEffect().equals("taunt") && !logic.getPlayer().getBoard().get(i).isCanAttack()) {
+                boardButtons1.get(i).setBorder(greyBorder);
+            } else if (logic.getPlayer().getBoard().get(i).isCanAttack()) {
+                boardButtons1.get(i).setBorder(greenBorder);
+            }  else if (!logic.getPlayer().getBoard().get(i).isCanAttack()) {
+                boardButtons1.get(i).setBorder(redBorder);
+            }
         }
         for (int i = 0; i < logic.getOtherPlayer().getBoard().size(); i++) {
             boardButtons2.get(i).setText(logic.getOtherPlayer().getBoard().get(i).getName()+ " " + logic.getOtherPlayer().getBoard().get(i).getAttack() + " " + logic.getOtherPlayer().getBoard().get(i).getHealth() + " " + logic.getOtherPlayer().getBoard().get(i).getEffect());
             boardButtons2.get(i).setVisible(true);
+            if(logic.getOtherPlayer().getBoard().get(i).isFreezed()){
+                boardButtons2.get(i).setBorder(blueBorder);
+            } else if (logic.getOtherPlayer().getBoard().get(i).getEffect().equals("taunt")) {
+                boardButtons2.get(i).setBorder(greyBorder);
+            }
         }
         for (int i = 0; i < logic.getSteps().size(); i++) {
             steps.get(i).setText(logic.getSteps().get(i));
             steps.get(i).setVisible(true);
         }
         playerHero1Button.setText(logic.getPlayer().getHero().getHeroName() + " " + logic.getPlayer().getHero().getHealth());
+        if(logic.getPlayer().getHero().isImmune()){
+            playerHero1Button.setBorder(blueBorder);
+        } else {
+            playerHero1Button.setBorder(null);
+        }
         playerHero2Button.setText(logic.getOtherPlayer().getHero().getHeroName() + " " + logic.getOtherPlayer().getHero().getHealth());
-        mana.setText("Mana: " + logic.getMana());
+        if(logic.getOtherPlayer().getHero().isImmune()){
+            playerHero2Button.setBorder(blueBorder);
+        } else {
+            playerHero2Button.setBorder(null);
+        }
+        mana.setText("Mana: " + logic.getMana() + " Deck: " + logic.getPlayer().getDeck().size());
 
     }
 

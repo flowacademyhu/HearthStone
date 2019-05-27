@@ -14,10 +14,11 @@ public class Minion extends Card {
     private int maxHealth;
     private String effect;
     private boolean canAttack;
+    private boolean freezed;
     //TODO private String type; (pl murloc);
 
 
-    public Minion(String name, String description, int cost, int attack, int basicAttack, int health, int basicHealth, int maxHealth, boolean canAttack, String effect) {
+    public Minion(String name, String description, int cost, int attack, int basicAttack, int health, int basicHealth, int maxHealth, boolean canAttack, String effect, boolean freezed) {
         super(name, description, cost);
         this.id = UUID.randomUUID().toString();
         this.attack = attack;
@@ -27,6 +28,7 @@ public class Minion extends Card {
         this.maxHealth = maxHealth;
         this.basicAttack = basicAttack;
         this.basicHealth = basicHealth;
+        this.freezed = freezed;
     }
 
     public int getBasicAttack() {
@@ -87,6 +89,14 @@ public class Minion extends Card {
 
     public String getId() {
         return id;
+    }
+
+    public boolean isFreezed() {
+        return freezed;
+    }
+
+    public void setFreezed(boolean freezed) {
+        this.freezed = freezed;
     }
 
     @Override

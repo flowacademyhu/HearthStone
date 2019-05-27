@@ -315,7 +315,7 @@ public class Board extends JFrame {
 
                             whatHappenedHero(hero2);
 
-                            Minion recruit = new Minion("Recruit", "", 1, 1,1,1, 1, 1, false, "");
+                            Minion recruit = new Minion("Recruit", "", 1, 1,1,1, 1, 1, false, "", false);
                             recruit.setText(recruit.getCost() + "/" + recruit.getName() + "/" + recruit.getAttack() + "/" + recruit.getHealth());
                             Border border = BorderFactory.createLineBorder(Color.BLUE, 2);
                             recruit.setBackground(Color.white);
@@ -430,7 +430,7 @@ public class Board extends JFrame {
 
                     whatHappenedHero(hero1);
 
-                    Minion recruit = new Minion("Recruit", "", 1, 1,1,1, 1, 1, false, "");
+                    Minion recruit = new Minion("Recruit", "", 1, 1,1,1, 1, 1, false, "", false);
                     recruit.setText(recruit.getCost() + "/" + recruit.getName() + "/" + recruit.getAttack() + "/" + recruit.getHealth());
                     Border border = BorderFactory.createLineBorder(Color.BLUE, 2);
                     recruit.setBackground(Color.white);

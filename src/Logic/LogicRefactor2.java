@@ -172,7 +172,6 @@ public class LogicRefactor2 {
     //endGame
     public void endGame() {
         if (player2.getHero().getHealth() <= 0) {
-            System.out.println("111111");
             isPlayer1Turn = false;
             isPlayer2Turn = false;
 
@@ -185,7 +184,6 @@ public class LogicRefactor2 {
             mana = 0;
 
         } else if (player1.getHero().getHealth() <= 0) {
-            System.out.println("222222");
             isPlayer1Turn = false;
             isPlayer2Turn = false;
 
@@ -202,8 +200,21 @@ public class LogicRefactor2 {
     //press endturn
     public void endTurn() {
         if (!gameEnded) {
+
             fight.makeCanNotAttack(player.getBoard());
-            fight.makeCanAttack((otherPlayer.getBoard()));
+            for(Minion minion : otherPlayer.getBoard()){
+                if(minion.isFreezed()){
+                    minion.setCanAttack(false);
+                    minion.setFreezed(false);
+                } else {
+                    minion.setCanAttack(true);
+                }
+            }
+
+            if (otherPlayer.getHero().isImmune()) {
+                otherPlayer.getHero().setImmune(false);
+            }
+
             if (isPlayer1Turn) {
                 isPlayer1Turn = false;
                 isPlayer2Turn = true;
@@ -220,7 +231,6 @@ public class LogicRefactor2 {
                 minion.setCanAttack(true);
             }
 
-            player.getHero().setImmune(false);
             mana = 10;
             try {
                 TimeUnit.SECONDS.sleep(2);
@@ -266,7 +276,7 @@ public class LogicRefactor2 {
 
             } else if (player.getHero().toString().equals("Paladin") && player.getBoard().size() < 5) {
 
-                Minion recruit = new Minion("Recruit", "", 1, 1, 1, 1, 1, 1, false, "");
+                Minion recruit = new Minion("Recruit", "", 1, 1, 1, 1, 1, 1, false, "", false);
                 player.getBoard().add(recruit);
                 heroPowerUsed();
 
@@ -399,7 +409,7 @@ public class LogicRefactor2 {
         }
         else if ((player.getHand().get(i).getDescription().equals("battlecry: gives 4 hp"))) {
 
-                if (!otherPlayer.getBoard().isEmpty() && !player.getBoard().isEmpty()) {
+                if (!otherPlayer.getBoard().isEmpty() || !player.getBoard().isEmpty()) {
 
                     healActive = true;
                     minionIndex = i;
@@ -410,7 +420,7 @@ public class LogicRefactor2 {
                     player.getHand().remove(player.getHand().get(i));
                 }
             } else if (player.getHand().get(i).getDescription().equals("battlecry: silences a minion")) {
-                if (!otherPlayer.getBoard().isEmpty() && !player.getBoard().isEmpty()) {
+                if (!otherPlayer.getBoard().isEmpty() || !player.getBoard().isEmpty()) {
 
                     silenceActive = true;
                     minionIndex = i;
