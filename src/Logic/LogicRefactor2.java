@@ -363,8 +363,12 @@ public class LogicRefactor2 {
 
     //play card
     public void playCard(int i) {
-       PlayCardProcessor PlayCardProcessor = new PlayCardProcessor();
-       PlayCardProcessor.process(i);
+       PlayCardProcessor PlayCardProcessor = new PlayCardProcessor(player, otherPlayer, i, mana,steps,
+         healActive,  silenceActive,
+         holyblessing, cavalry, flee, traitor,
+        dragonfire, frostbalst, savethehero,
+         spellPressed);
+       PlayCardProcessor.process();
     }
 
     public void silenceMyMinion(int i) {
