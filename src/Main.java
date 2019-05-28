@@ -1,10 +1,10 @@
-import Board.Board1;
+import Board.Board;
 
 public class Main {
 
     public static void main(String[] args) {
 
-        Board1 board = new Board1();
+        Board board = new Board();
 
     }
 }

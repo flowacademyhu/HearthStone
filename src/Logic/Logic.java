@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 
-public class LogicRefactor2 {
+public class Logic {
 
     Player player1;
     Player player2;
@@ -75,7 +75,7 @@ public class LogicRefactor2 {
 
     }*/
 
-    public LogicRefactor2() {
+    public Logic() {
 
         hand1 = deck.draw(3, hand1, deck1, hero1, hand1);
         hand2 = deck.draw(4, hand2, deck2, hero2, hand2);

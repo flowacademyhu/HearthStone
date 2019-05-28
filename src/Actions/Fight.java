@@ -2,7 +2,6 @@ package Actions;
 
 import Cards.Minion;
 import Heroes.Hero;
-import Logic.LogicRefactor2;
 
 import java.util.ArrayList;
 import java.util.List;

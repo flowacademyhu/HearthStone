@@ -2,10 +2,8 @@ package Board;
 
 
 
-import Actions.Fight;
-import Cards.Card;
 import Cards.Minion;
-import Logic.LogicRefactor2;
+import Logic.Logic;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -14,9 +12,9 @@ import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Board1 extends JFrame {
+public class Board extends JFrame {
 
-    LogicRefactor2 logic = new LogicRefactor2();
+    Logic logic = new Logic();
 
     private JButton playerHero1Button = new JButton();
     private JButton playerHero2Button = new JButton();
@@ -118,7 +116,7 @@ public class Board1 extends JFrame {
         return list;
     }
 
-    public Board1() throws HeadlessException{
+    public Board() throws HeadlessException{
 
         setTitle("FlowStone");
         setLayout(new BorderLayout());
