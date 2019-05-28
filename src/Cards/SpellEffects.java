@@ -59,8 +59,9 @@ public class SpellEffects {
 
     public void traitor(int i, List<Minion> board1, List<Minion> board2){
 
-        board2.add(board1.get(i));
-
+        if(board2.size() < 5) {
+            board2.add(board1.get(i));
+        }
         board1.remove(board1.get(i));
 
     }

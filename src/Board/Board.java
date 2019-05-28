@@ -59,13 +59,13 @@ public class Board extends JFrame {
             JButton button = new JButton();
             button.setVisible(false);
             button.addActionListener((ActionEvent e) -> {
-                //TODO
                 if(handButtons1.contains(e.getSource())) {
                     int index = list.indexOf(e.getSource());
                     logic.playCard(index);
                     update();
                 }
             });
+            button.setPreferredSize(new Dimension(170, 230));
             list.add(button);
         }
         return list;
@@ -80,7 +80,6 @@ public class Board extends JFrame {
             JButton button = new JButton();
             button.setVisible(false);
             button.addActionListener((ActionEvent e) -> {
-                //TODO
                 int index = list.indexOf(e.getSource());
                 if(logic.isSpellPressed() && boardButtons1.contains(e.getSource())) {
                     logic.castSpellOnOwnMinion(index);
@@ -111,6 +110,7 @@ public class Board extends JFrame {
                 logic.endGame();
                 update();
             });
+            button.setPreferredSize(new Dimension(200, 150));
             list.add(button);
         }
         return list;
@@ -169,6 +169,8 @@ public class Board extends JFrame {
 
         JPanel panel = new JPanel();
         panel.setLayout(new FlowLayout());
+
+        panel.setBackground(Color.BLACK);
 
         for (JButton button:buttons) {
             panel.add(button);
@@ -234,6 +236,11 @@ public class Board extends JFrame {
 
         });
 
+        playerHero1Button.setPreferredSize(new Dimension(150, 150));
+        playerHero2Button.setPreferredSize(new Dimension(150, 150));
+        endTurnButton.setPreferredSize(new Dimension(150, 150));
+        mana.setPreferredSize(new Dimension(150, 150));
+
         panel.add(playerHero2Button);
         panel.add(endTurnButton);
         panel.add(playerHero1Button);
@@ -263,6 +270,10 @@ public class Board extends JFrame {
         for (JButton button : boardButtons2) {
             panel2.add(button);
         }
+
+        panel.setBackground(Color.ORANGE);
+        panel1.setBackground(Color.ORANGE);
+        panel2.setBackground(Color.ORANGE);
 
         panel.add(panel2);
         panel.add(line);
@@ -303,7 +314,7 @@ public class Board extends JFrame {
                 handButtons1.get(i).setText(logic.getPlayer().getHand().get(i).getCost() + " " + logic.getPlayer().getHand().get(i).getName() + " " + ((Minion) logic.getPlayer().getHand().get(i)).getAttack() + " " + ((Minion) logic.getPlayer().getHand().get(i)).getHealth());
                 handButtons1.get(i).setToolTipText("Minion" + " " + logic.getPlayer().getHand().get(i).getDescription());
             } else {
-                handButtons1.get(i).setText("Spell " + logic.getPlayer().getHand().get(i).getCost() + " " + logic.getPlayer().getHand().get(i).getName());
+                handButtons1.get(i).setText(logic.getPlayer().getHand().get(i).getCost() + " " + logic.getPlayer().getHand().get(i).getName());
                 handButtons1.get(i).setToolTipText("Spell" + " " + logic.getPlayer().getHand().get(i).getDescription());
             }
             handButtons1.get(i).setVisible(true);

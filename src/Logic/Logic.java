@@ -416,7 +416,7 @@ public class Logic {
 
 
         }
-        else if ((player.getHand().get(i).getDescription().equals("battlecry: gives 4 hp"))) {
+        else if ((player.getHand().get(i).getDescription().equals("battlecry: gives 4 hp") && player.getHand().get(i).getCost() <= mana)) {
 
                 if (!otherPlayer.getBoard().isEmpty() || !player.getBoard().isEmpty()) {
 
@@ -428,7 +428,7 @@ public class Logic {
                     mana -= player.getHand().get(i).getCost();
                     player.getHand().remove(player.getHand().get(i));
                 }
-            } else if (player.getHand().get(i).getDescription().equals("battlecry: silences a minion")) {
+            } else if (player.getHand().get(i).getDescription().equals("battlecry: silences a minion") && player.getHand().get(i).getCost() <= mana) {
                 if (!otherPlayer.getBoard().isEmpty() || !player.getBoard().isEmpty()) {
 
                     silenceActive = true;
@@ -477,61 +477,73 @@ public class Logic {
 
     public void silenceMyMinion(int i) {
 
-        deck.addCardToBoard(player.getBoard(), (Minion) player.getHand().get(minionIndex));
-        mana -= player.getHand().get(minionIndex).getCost();
+        if(player.getBoard().size() < 5) {
+            deck.addCardToBoard(player.getBoard(), (Minion) player.getHand().get(minionIndex));
+            mana -= player.getHand().get(minionIndex).getCost();
 
-        minion.silence(player.getBoard().get(i));
-        player.getHand().remove(player.getHand().get(minionIndex));
+            minion.silence(player.getBoard().get(i));
+            player.getHand().remove(player.getHand().get(minionIndex));
+        }
         silenceActive = false;
     }
 
     public void silenceEnemyMinion(int i) {
 
-        deck.addCardToBoard(player.getBoard(), (Minion) player.getHand().get(minionIndex));
-        mana -= player.getHand().get(minionIndex).getCost();
+        if(player.getBoard().size() < 5) {
+            deck.addCardToBoard(player.getBoard(), (Minion) player.getHand().get(minionIndex));
+            mana -= player.getHand().get(minionIndex).getCost();
 
-        minion.silence(otherPlayer.getBoard().get(i));
-        player.getHand().remove(player.getHand().get(minionIndex));
+            minion.silence(otherPlayer.getBoard().get(i));
+            player.getHand().remove(player.getHand().get(minionIndex));
+        }
         silenceActive = false;
     }
 
     public  void healMyMinion(int i) {
 
-        deck.addCardToBoard(player.getBoard(), (Minion) player.getHand().get(minionIndex));
-        mana -= player.getHand().get(minionIndex).getCost();
+        if(player.getBoard().size() < 5) {
+            deck.addCardToBoard(player.getBoard(), (Minion) player.getHand().get(minionIndex));
+            mana -= player.getHand().get(minionIndex).getCost();
 
-        minion.add4HPMinion(player.getBoard().get(i));
-        player.getHand().remove(player.getHand().get(minionIndex));
+            minion.add4HPMinion(player.getBoard().get(i));
+            player.getHand().remove(player.getHand().get(minionIndex));
+        }
         healActive = false;
     }
 
     public  void healEnemyMinion(int i) {
 
-        deck.addCardToBoard(player.getBoard(), (Minion) player.getHand().get(minionIndex));
-        mana -= player.getHand().get(minionIndex).getCost();
+        if(player.getBoard().size() < 5) {
+            deck.addCardToBoard(player.getBoard(), (Minion) player.getHand().get(minionIndex));
+            mana -= player.getHand().get(minionIndex).getCost();
 
-        minion.add4HPMinion(otherPlayer.getBoard().get(i));
-        player.getHand().remove(player.getHand().get(minionIndex));
+            minion.add4HPMinion(otherPlayer.getBoard().get(i));
+            player.getHand().remove(player.getHand().get(minionIndex));
+        }
         healActive = false;
     }
 
     public void healMyHero() {
 
-        deck.addCardToBoard(player.getBoard(), (Minion) player.getHand().get(minionIndex));
-        mana -= player.getHand().get(minionIndex).getCost();
+        if(player.getBoard().size() < 5) {
+            deck.addCardToBoard(player.getBoard(), (Minion) player.getHand().get(minionIndex));
+            mana -= player.getHand().get(minionIndex).getCost();
 
-        minion.add4HpHero(player.getHero());
-        player.getHand().remove(player.getHand().get(minionIndex));
+            minion.add4HpHero(player.getHero());
+            player.getHand().remove(player.getHand().get(minionIndex));
+        }
         healActive = false;
     }
 
     public void healEnemyHero() {
 
-        deck.addCardToBoard(player.getBoard(), (Minion) player.getHand().get(minionIndex));
-        mana -= player.getHand().get(minionIndex).getCost();
+        if(player.getBoard().size() < 5) {
+            deck.addCardToBoard(player.getBoard(), (Minion) player.getHand().get(minionIndex));
+            mana -= player.getHand().get(minionIndex).getCost();
 
-        minion.add4HpHero(otherPlayer.getHero());
-        player.getHand().remove(player.getHand().get(minionIndex));
+            minion.add4HpHero(otherPlayer.getHero());
+            player.getHand().remove(player.getHand().get(minionIndex));
+        }
         healActive = false;
     }
 
