@@ -20,7 +20,7 @@ public class LogicRefactor2 {
 
     int mana = 10;
 
-    Hero hero1 = new Paladin("Paladin", false);
+    Hero hero1 = new Warlock("Warlock", false);
     Hero hero2 = new Hunter("Hunter", false);
 
     boolean isPlayer1Turn = true;
@@ -77,8 +77,8 @@ public class LogicRefactor2 {
 
     public LogicRefactor2() {
 
-        hand1 = deck.draw(3, hand1, deck1, hero1);
-        hand2 = deck.draw(4, hand2, deck2, hero2);
+        hand1 = deck.draw(3, hand1, deck1, hero1, hand1);
+        hand2 = deck.draw(4, hand2, deck2, hero2, hand2);
 
         player1 = new Player(deck1, hand1, board1, hero1);
         player2 = new Player(deck2, hand2, board2, hero2);
@@ -201,11 +201,22 @@ public class LogicRefactor2 {
     public void endTurn() {
         if (!gameEnded) {
 
+            //TODO freeze a minion
             fight.makeCanNotAttack(player.getBoard());
+
+            for (Minion minion : player.getBoard()) {
+                if(minion.isFreezed()) {
+                    minion.setFreezed(false);
+                    minion.setCanAttack(false);
+                } else {
+                    minion.setCanAttack(false);
+                }
+
+            }
+
             for(Minion minion : otherPlayer.getBoard()){
                 if(minion.isFreezed()){
                     minion.setCanAttack(false);
-                    minion.setFreezed(false);
                 } else {
                     minion.setCanAttack(true);
                 }
@@ -224,12 +235,8 @@ public class LogicRefactor2 {
             }
 
             List<Card> drawedCards = new ArrayList<>();
-            drawedCards = deck.draw(1, drawedCards, otherPlayer.getDeck(), otherPlayer.getHero());
+            drawedCards = deck.draw(1, drawedCards, otherPlayer.getDeck(), otherPlayer.getHero(), otherPlayer.getHand());
             otherPlayer.getHand().addAll(drawedCards);
-
-            for (Minion minion : otherPlayer.getBoard()) {
-                minion.setCanAttack(true);
-            }
 
             mana = 10;
             try {
@@ -282,9 +289,11 @@ public class LogicRefactor2 {
 
             } else if ((player.getHero().toString().equals("Warlock"))) {
 
-                player.getHero().setHealth(player.getHero().getHealth() - 2);
+                if(!player.getHero().isImmune()) {
+                    player.getHero().setHealth(player.getHero().getHealth() - 2);
+                }
                 List<Card> drawedCards = new ArrayList<>();
-                drawedCards = deck.draw(2, drawedCards, player.getDeck(), player.getHero());
+                drawedCards = deck.draw(2, drawedCards, player.getDeck(), player.getHero(), player.getHand());
                 player.getHand().addAll(drawedCards);
                 heroPowerUsed();
             }
@@ -388,7 +397,7 @@ public class LogicRefactor2 {
             } else if ((player.getHand().get(i).getDescription().equals("battlecry: draws 2 cards"))) {
 
                 List<Card> drawedCards = new ArrayList<>();
-                drawedCards = deck.draw(2, drawedCards, player.getDeck(), player.getHero());
+                drawedCards = deck.draw(2, drawedCards, player.getDeck(), player.getHero(), player.getHand());
 
                 player.getHand().addAll(drawedCards);
 
@@ -560,8 +569,6 @@ public class LogicRefactor2 {
 
                     } else if (traitor) {
 
-                        /*spell.traitor(i, player.getBoard(), otherPlayer.getBoard());
-                        player.getHand().remove(i);*/
                         traitor = false;
 
                     } else if (dragonfire) {
@@ -669,7 +676,7 @@ public class LogicRefactor2 {
         //attack minion
         public void selectAttackerMinion(int i) {
 
-            if (player.getBoard().get(i).isCanAttack()) {
+            if (player.getBoard().get(i).isCanAttack() && player.getBoard().get(i).getAttack() > 0) {
 
                 minionPressed = true;
 

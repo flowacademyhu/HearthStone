@@ -46,11 +46,13 @@ public class SpellEffects {
 
     public void flee(int i, List<Minion> board, List<Card> hand){
 
-        board.get(i).setHealth(board.get(i).getBasicHealth());
-        board.get(i).setAttack(board.get(i).getBasicAttack());
+        if(hand.size() < 10) {
+            board.get(i).setHealth(board.get(i).getBasicHealth());
+            board.get(i).setAttack(board.get(i).getBasicAttack());
+            board.get(i).setCanAttack(false);
 
-        hand.add(board.get(i));
-
+            hand.add(board.get(i));
+        }
         board.remove(board.get(i));
 
     }
@@ -73,7 +75,6 @@ public class SpellEffects {
 
 
     public void frostBlast(int i, List<Minion> board) {
-         //TODO
         board.get(i).setFreezed(true);
     }
 

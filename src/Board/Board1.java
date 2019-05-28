@@ -36,6 +36,7 @@ public class Board1 extends JFrame {
     Border redBorder = BorderFactory.createLineBorder(Color.RED, 3);
     Border blueBorder = BorderFactory.createLineBorder(Color.BLUE, 3);
     Border greyBorder = BorderFactory.createLineBorder(Color.GRAY, 3);
+    Border emptyBorder = BorderFactory.createEmptyBorder();
 
     private List<JLabel> stepLabelAdder() {
 
@@ -318,7 +319,7 @@ public class Board1 extends JFrame {
             boardButtons1.get(i).setVisible(true);
             if(logic.getPlayer().getBoard().get(i).isFreezed()){
                 boardButtons1.get(i).setBorder(blueBorder);
-            } else if (logic.getPlayer().getBoard().get(i).getEffect().equals("taunt") && !logic.getPlayer().getBoard().get(i).isCanAttack()) {
+            } else if (logic.getPlayer().getBoard().get(i).getEffect().equals("taunt") && !logic.getPlayer().getBoard().get(i).isCanAttack() || logic.getPlayer().getBoard().get(i).getEffect().equals("taunt") && logic.getPlayer().getBoard().get(i).getAttack() <= 0) {
                 boardButtons1.get(i).setBorder(greyBorder);
             } else if (logic.getPlayer().getBoard().get(i).isCanAttack()) {
                 boardButtons1.get(i).setBorder(greenBorder);
@@ -331,8 +332,12 @@ public class Board1 extends JFrame {
             boardButtons2.get(i).setVisible(true);
             if(logic.getOtherPlayer().getBoard().get(i).isFreezed()){
                 boardButtons2.get(i).setBorder(blueBorder);
-            } else if (logic.getOtherPlayer().getBoard().get(i).getEffect().equals("taunt")) {
+            } else if (logic.getOtherPlayer().getBoard().get(i).getEffect().equals("taunt") && !logic.getOtherPlayer().getBoard().get(i).isCanAttack() || logic.getOtherPlayer().getBoard().get(i).getEffect().equals("taunt") && logic.getOtherPlayer().getBoard().get(i).getAttack() <= 0) {
                 boardButtons2.get(i).setBorder(greyBorder);
+            } else if (logic.getOtherPlayer().getBoard().get(i).isCanAttack()) {
+                boardButtons2.get(i).setBorder(greenBorder);
+            }  else if (!logic.getOtherPlayer().getBoard().get(i).isCanAttack()) {
+                boardButtons2.get(i).setBorder(redBorder);
             }
         }
         for (int i = 0; i < logic.getSteps().size(); i++) {

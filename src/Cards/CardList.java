@@ -32,20 +32,20 @@ public class CardList {
         list.add(new Minion("Goblin racer", "charge", 3, 3,3,4,4, 4,true,"charge", false));
         list.add(new Minion("Gnome racer", "charge", 2, 2,2,1,1, 1,true,"charge", false));
         //14 battlecry minioins
-        list.add(new Minion("FireWall", "battlecry: gets +1/+1 after every unit", 2, 2,2,1,1, 1,false,"battlecry", false));
-        list.add(new Minion("FireWall", "battlecry: gets +1/+1 after every unit", 2, 2,2,1,1, 1,false,"battlecry", false));
-        list.add(new Minion("FireWall", "battlecry: silences a minion", 2, 2,2,1,1, 1,false,"battlecry", false));
-        list.add(new Minion("FireWall", "battlecry: silences a minion", 2, 2,2,1,1, 1,false,"battlecry", false));
-        list.add(new Minion("FireWall", "battlecry: gets +1/+1 after every friendly unit", 2, 2,2,1,1, 1,false,"battlecry", false));
-        list.add(new Minion("FireWall", "battlecry: gets +1/+1 after every friendly unit", 2, 2,2,1,1, 1,false,"battlecry", false));
-        list.add(new Minion("FireWall", "battlecry: gives 4 hp", 2, 2,2,1,1, 1,false,"battlecry", false));
-        list.add(new Minion("FireWall", "battlecry: gives 4 hp", 2, 2,2,1,1, 1,false,"battlecry", false));
-        list.add(new Minion("FireWall", "battlecry: draws 2 cards", 2, 2,2,1,1, 1,false,"battlecry", false));
-        list.add(new Minion("FireWall", "battlecry: draws 2 cards", 2, 2,2,1,1, 1,false,"battlecry", false));
-        list.add(new Minion("FireWall", "battlecry: gives 2 damage to every unit", 2, 2,2,1,1, 1,false,"battlecry", false));
-        list.add(new Minion("FireWall", "battlecry: gives 2 damage to every unit", 2, 2,2,1,1, 1,false,"battlecry", false));
-        list.add(new Minion("FireWall", "battlecry: destroys all minions above 3 damage", 2, 2,2,1,1, 1,false,"battlecry", false));
-        list.add(new Minion("FireWall", "battlecry: destroys all minions above 3 damage", 2, 2,2,1,1, 1,false,"battlecry", false));
+        list.add(new Minion("Warchief", "battlecry: gets +1/+1 after every unit", 5, 2,2,1,1, 1,false,"battlecry", false));
+        list.add(new Minion("Warchier", "battlecry: gets +1/+1 after every unit", 5, 2,2,1,1, 1,false,"battlecry", false));
+        list.add(new Minion("Soul eater", "battlecry: silences a minion", 3, 2,3,1,1, 1,false,"battlecry", false));
+        list.add(new Minion("Soul eater", "battlecry: silences a minion", 3, 2,3,1,1, 1,false,"battlecry", false));
+        list.add(new Minion("Leader", "battlecry: gets +1/+1 after every friendly unit", 4, 2,2,1,1, 1,false,"battlecry", false));
+        list.add(new Minion("Leader", "battlecry: gets +1/+1 after every friendly unit", 4, 2,2,1,1, 1,false,"battlecry", false));
+        list.add(new Minion("Medic", "battlecry: gives 4 hp", 5, 2,3,1,1, 1,false,"battlecry", false));
+        list.add(new Minion("Medic", "battlecry: gives 4 hp", 5, 2,3,1,1, 1,false,"battlecry", false));
+        list.add(new Minion("Gambler", "battlecry: draws 2 cards", 5, 3,3,1,1, 1,false,"battlecry", false));
+        list.add(new Minion("Gambler", "battlecry: draws 2 cards", 5, 3,3,1,1, 1,false,"battlecry", false));
+        list.add(new Minion("Hellraiser", "battlecry: gives 2 damage to every unit", 2, 2,2,1,1, 1,false,"battlecry", false));
+        list.add(new Minion("Hellraiser", "battlecry: gives 2 damage to every unit", 2, 2,2,1,1, 1,false,"battlecry", false));
+        list.add(new Minion("Giant hunter", "battlecry: destroys all minions above 3 damage", 2, 2,2,1,1, 1,false,"battlecry", false));
+        list.add(new Minion("Giant hunter", "battlecry: destroys all minions above 3 damage", 2, 2,2,1,1, 1,false,"battlecry", false));
         //14 spells
         list.add(new Spell("Holy blessing", "gives +3/+3 to a minion",3, "holyblessing"));
         list.add(new Spell("Holy blessing", "gives +3/+3 to a minion",3, "holyblessing"));

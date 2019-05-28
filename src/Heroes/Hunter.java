@@ -9,7 +9,10 @@ public class Hunter extends Hero{
 
     //deal 2 damage to opponent hero
     public void heroPower(Object object) {
-        ((Hero)object).setHealth(((Hero)object).getHealth()-2);
+
+        if(!((Hero)object).isImmune()) {
+            ((Hero) object).setHealth(((Hero) object).getHealth() - 2);
+        }
     }
 
     @Override
