@@ -15,8 +15,6 @@ public class Minion extends Card {
     private String effect;
     private boolean canAttack;
     private boolean freezed;
-    //TODO private String type; (pl murloc);
-
 
     public Minion(String name, String description, int cost, int attack, int basicAttack, int health, int basicHealth, int maxHealth, boolean canAttack, String effect, boolean freezed) {
         super(name, description, cost);

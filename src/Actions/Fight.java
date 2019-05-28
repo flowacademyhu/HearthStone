@@ -10,13 +10,13 @@ import java.util.ListIterator;
 public class Fight {
 
     Happenings happenings = new Happenings();
-    List<String> steps = new ArrayList<>();
+    private String steps;
 
-    public List<String> getSteps() {
+    public String getSteps() {
         return steps;
     }
 
-    public void setSteps(List<String> steps) {
+    public void setSteps(String steps) {
         this.steps = steps;
     }
 
@@ -35,6 +35,8 @@ public class Fight {
     //minion dies
     public void isMinionDied(List<Minion> board){
 
+        steps = "";
+
         ListIterator<Minion> listIterator = board.listIterator();
 
         while (listIterator.hasNext()) {
@@ -43,8 +45,8 @@ public class Fight {
 
             if (minion.getHealth() <= 0) {
 
+                steps += happenings.whatHappenedMinionKill(minion) + "\n";
                 listIterator.remove();
-                steps.add(happenings.whatHappenedMinionKill(minion));
 
             }
         }

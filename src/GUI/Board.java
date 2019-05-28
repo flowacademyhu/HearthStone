@@ -1,20 +1,22 @@
-package Board;
-
-
+package GUI;
 
 import Cards.Minion;
+import Heroes.Hero;
 import Logic.Logic;
 
 import javax.swing.*;
 import javax.swing.border.Border;
+import javax.swing.text.DefaultCaret;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.List;
 
+import static javax.swing.text.DefaultCaret.ALWAYS_UPDATE;
+
 public class Board extends JFrame {
 
-    Logic logic = new Logic();
+    private Logic logic;
 
     private JButton playerHero1Button = new JButton();
     private JButton playerHero2Button = new JButton();
@@ -27,7 +29,9 @@ public class Board extends JFrame {
     private List<JButton> boardButtons1 = boardButtonAdder();
     private List<JButton> boardButtons2 = boardButtonAdder();
 
-    private List<JLabel> steps = stepLabelAdder();
+    //private List<JLabel> steps = stepLabelAdder();
+
+    private JTextArea steps = new JTextArea("Commands");
 
     Border blackBorder = BorderFactory.createLineBorder(Color.BLACK, 3);
     Border greenBorder = BorderFactory.createLineBorder(Color.GREEN, 3);
@@ -36,7 +40,11 @@ public class Board extends JFrame {
     Border greyBorder = BorderFactory.createLineBorder(Color.GRAY, 3);
     Border emptyBorder = BorderFactory.createEmptyBorder();
 
-    private List<JLabel> stepLabelAdder() {
+    private JLabel sand = new JLabel();
+
+    Font fontHappens = new Font("SansSerif", Font.BOLD, 20);
+
+   /* private List<JLabel> stepLabelAdder() {
 
         List list = new ArrayList<>();
 
@@ -48,6 +56,21 @@ public class Board extends JFrame {
         }
 
         return list;
+    }*/
+
+    public Board(Hero hero1, Hero hero2) throws HeadlessException{
+
+        setTitle("FlowStone");
+        setLayout(new BorderLayout());
+        setExtendedState(JFrame.MAXIMIZED_BOTH);
+        this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+
+        this.logic = new Logic(hero1, hero2);
+
+        gameBoard();
+
+        setVisible(true);
+
     }
 
     private List<JButton> handButtonAdder() {
@@ -65,7 +88,7 @@ public class Board extends JFrame {
                     update();
                 }
             });
-            button.setPreferredSize(new Dimension(170, 230));
+            button.setPreferredSize(new Dimension(180, 230));
             list.add(button);
         }
         return list;
@@ -116,21 +139,6 @@ public class Board extends JFrame {
         return list;
     }
 
-    public Board() throws HeadlessException{
-
-        setTitle("FlowStone");
-        setLayout(new BorderLayout());
-        setExtendedState(JFrame.MAXIMIZED_BOTH);
-        // "fullscreen"
-        //setUndecorated(true);
-        this.setDefaultCloseOperation(EXIT_ON_CLOSE);
-
-        gameBoard();
-
-        setVisible(true);
-
-    }
-
     private void gameBoard() {
 
         JPanel handOfPlayerOne = hands(handButtons1);
@@ -152,16 +160,34 @@ public class Board extends JFrame {
 
     private JPanel commands() {
 
+        //TODO happenings SCROLLBAR
+
         JPanel panel = new JPanel();
-        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS) );
+        steps.setText("Commands" + "\n" + "-------------------" + "\n");
+        //panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS) );
 
-        JLabel commandTitle = new JLabel("Commands");
+        JScrollPane scrollPane = new JScrollPane(steps);
+        steps.setCaretPosition(steps.getDocument().getLength() - 1);
+        DefaultCaret caret = (DefaultCaret) steps.getCaret();
+        caret.setUpdatePolicy(ALWAYS_UPDATE);
 
-        panel.add(commandTitle);
+        steps.setEditable(false);
+        steps.setPreferredSize(new Dimension(370, 1000));
+        steps.setBorder(emptyBorder);
+        steps.setFont(fontHappens);
 
-        for (JLabel step: steps) {
+        steps.setBackground(Color.WHITE);
+        panel.setBackground(Color.WHITE);
+
+        panel.add(scrollPane);
+
+        //JLabel commandTitle = new JLabel("Commands");
+
+        //panel.add(commandTitle);
+
+        /*for (JLabel step: steps) {
             panel.add(step);
-        }
+        }*/
         return panel;
     }
 
@@ -271,9 +297,12 @@ public class Board extends JFrame {
             panel2.add(button);
         }
 
-        panel.setBackground(Color.ORANGE);
-        panel1.setBackground(Color.ORANGE);
-        panel2.setBackground(Color.ORANGE);
+        //TODO ICON
+        sand.setIcon(new ImageIcon("/HearthStone/src/Textures/sand.jpg"));
+
+        panel.add(sand);
+        panel1.add(sand);
+        panel2.add(sand);
 
         panel.add(panel2);
         panel.add(line);
@@ -285,13 +314,8 @@ public class Board extends JFrame {
 
     private void update() {
 
-        //TODO what happens
-        if(logic.getSteps().size() >= 50) {
-            for( String step : logic.getSteps() ) {
-                step = "";
-            }
-            logic.getSteps().clear();
-        }
+        steps.setText("");
+        steps.setText(steps.getText() + "\n" + logic.getSteps());
 
         for (int i = logic.getPlayer().getHand().size(); i < 10; i++) {
             handButtons1.get(i).setVisible(false);
@@ -348,10 +372,6 @@ public class Board extends JFrame {
             }  else if (!logic.getOtherPlayer().getBoard().get(i).isCanAttack()) {
                 boardButtons2.get(i).setBorder(redBorder);
             }
-        }
-        for (int i = 0; i < logic.getSteps().size(); i++) {
-            steps.get(i).setText(logic.getSteps().get(i));
-            steps.get(i).setVisible(true);
         }
         playerHero1Button.setText(logic.getPlayer().getHero().getHeroName() + " " + logic.getPlayer().getHero().getHealth());
         if(logic.getPlayer().getHero().isImmune()){

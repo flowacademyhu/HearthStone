@@ -8,7 +8,6 @@ public class Card extends JButton {
     private String name;
     private String description;
     private int cost;
-    //TODO private String type;
 
     public Card(String name, String description, int cost) {
         this.name = name;

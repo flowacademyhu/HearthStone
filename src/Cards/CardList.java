@@ -24,7 +24,7 @@ public class CardList {
         list.add(new Minion("Gate defender", "taunt", 3, 1,1,3,3, 3,false,"taunt", false));
         list.add(new Minion("Ready to die", "taunt", 0, 0,0,2,2, 2,false,"taunt", false));
         list.add(new Minion("Ready to die 2.0", "taunt", 0, 0,0,2,2, 2,false,"taunt", false));
-        list.add(new Minion("Protector of the treasure", "taunt", 5, 3,3,5,5, 5,false,"taunt", false));
+        list.add(new Minion("Protector", "taunt", 5, 3,3,5,5, 5,false,"taunt", false));
         list.add(new Minion("FireWall", "taunt", 2, 3,3,3,3, 3,false,"taunt", false));
         //4 charge minions
         list.add(new Minion("Wolf rider", "charge", 3, 4,4,3,3, 3, true,"charge", false));

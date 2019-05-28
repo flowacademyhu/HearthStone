@@ -20,8 +20,8 @@ public class Logic {
 
     int mana = 10;
 
-    Hero hero1 = new Warlock("Warlock", false);
-    Hero hero2 = new Hunter("Hunter", false);
+    Hero hero1;
+    Hero hero2;
 
     boolean isPlayer1Turn = true;
     boolean isPlayer2Turn = false;
@@ -51,7 +51,9 @@ public class Logic {
     SpellEffects spell = new SpellEffects();
     MinionEffects minion = new MinionEffects();
 
-    List<String> steps = new ArrayList<>();
+    //List<String> steps = new ArrayList<>();
+    private String newline = "\n";
+    private String steps = "Commands" + newline + "-------------";
 
     Deck deck = new Deck();
     private List<Card> deck1 = new ArrayList<>(deck.deckBuilder());
@@ -75,7 +77,10 @@ public class Logic {
 
     }*/
 
-    public Logic() {
+    public Logic(Hero heroOne, Hero heroTwo) {
+
+        hero1 = heroOne;
+        hero2 = heroTwo;
 
         hand1 = deck.draw(3, hand1, deck1, hero1, hand1);
         hand2 = deck.draw(4, hand2, deck2, hero2, hand2);
@@ -87,11 +92,19 @@ public class Logic {
     //Getters, setters
 
 
-    public List<String> getSteps() {
+ /*   public List<String> getSteps() {
         return steps;
     }
 
     public void setSteps(List<String> steps) {
+        this.steps = steps;
+    }*/
+
+    public String getSteps() {
+        return steps;
+    }
+
+    public void setSteps(String steps) {
         this.steps = steps;
     }
 
@@ -164,9 +177,9 @@ public class Logic {
             player = player2;
             otherPlayer = player1;
         }
-        steps.add("------------");
-        steps.add(happenings.nextTurn(player.getHero()));
-        steps.add("------------");
+        steps += newline + "------------"  + "\n";
+        steps += happenings.nextTurn(player.getHero());
+        steps += newline + "------------"  + "\n";
     }
 
     //endGame
@@ -175,9 +188,9 @@ public class Logic {
             isPlayer1Turn = false;
             isPlayer2Turn = false;
 
-            steps.add("------------");
-            steps.add(happenings.endGame(player1.getHero()));
-            steps.add("------------");
+            steps += newline + "------------"  + "\n";
+            steps += happenings.endGame(player1.getHero());
+            steps += newline + "------------"  + "\n";
 
             fight.makeCanNotAttack(player.getBoard());
             gameEnded = true;
@@ -187,9 +200,9 @@ public class Logic {
             isPlayer1Turn = false;
             isPlayer2Turn = false;
 
-            steps.add("------------");
-            steps.add(happenings.endGame(player2.getHero()));
-            steps.add("------------");
+            steps += newline + "------------"  + "\n";
+            steps += happenings.endGame(player2.getHero());
+            steps += newline + "------------"  + "\n";
 
             fight.makeCanNotAttack(player.getBoard());
             gameEnded = true;
@@ -201,7 +214,6 @@ public class Logic {
     public void endTurn() {
         if (!gameEnded) {
 
-            //TODO freeze a minion
             fight.makeCanNotAttack(player.getBoard());
 
             for (Minion minion : player.getBoard()) {
@@ -211,7 +223,6 @@ public class Logic {
                 } else {
                     minion.setCanAttack(false);
                 }
-
             }
 
             for(Minion minion : otherPlayer.getBoard()){
@@ -303,7 +314,7 @@ public class Logic {
 
     public void heroPowerUsed() {
 
-        steps.add(happenings.whatHappenedHero(player.getHero()));
+        steps += happenings.whatHappenedHero(player.getHero());
         heroPowerUsed = true;
         mana -= 2;
 
@@ -311,31 +322,31 @@ public class Logic {
 
     public void mageDamagesMyMinion(int i) {
         player.getBoard().get(i).setHealth(player.getBoard().get(i).getHealth() - 1);
-        steps.add(happenings.whatHappenedMageOrPriest(player.getHero(), player.getBoard().get(i)));
+        steps += happenings.whatHappenedMageOrPriest(player.getHero(), player.getBoard().get(i));
         fight.isMinionDied(player.getBoard());
-        steps.addAll(fight.getSteps());
-        fight.setSteps(new ArrayList<>());
+        steps += fight.getSteps();
+        //fight.setSteps(new ArrayList<>());
         heroMagePressed = false;
     }
 
     public void mageDamagesEnemyMinion(int i) {
         otherPlayer.getBoard().get(i).setHealth(otherPlayer.getBoard().get(i).getHealth() - 1);
-        steps.add(happenings.whatHappenedMageOrPriest(player.getHero(), otherPlayer.getBoard().get(i)));
+        steps += happenings.whatHappenedMageOrPriest(player.getHero(), otherPlayer.getBoard().get(i));
         fight.isMinionDied(otherPlayer.getBoard());
-        steps.addAll(fight.getSteps());
-        fight.setSteps(new ArrayList<>());
+        steps += fight.getSteps();
+        //fight.setSteps(new ArrayList<>());
         heroMagePressed = false;
     }
 
     public void mageDamagesMyHero() {
         player.getHero().setHealth(player.getHero().getHealth() - 1);
-        steps.add(happenings.whatHappenedMageOrPriest(player.getHero(), player.getHero()));
+        steps += happenings.whatHappenedMageOrPriest(player.getHero(), player.getHero());
         heroMagePressed = false;
     }
 
     public void mageDamagesEnemyHero() {
         otherPlayer.getHero().setHealth(otherPlayer.getHero().getHealth() - 1);
-        steps.add(happenings.whatHappenedMageOrPriest(player.getHero(), otherPlayer.getHero()));
+        steps += happenings.whatHappenedMageOrPriest(player.getHero(), otherPlayer.getHero());
         heroMagePressed = false;
     }
 
@@ -345,7 +356,7 @@ public class Logic {
         } else if(player.getBoard().get(i).getMaxHealth() >= player.getBoard().get(i).getHealth() + 1) {
             player.getBoard().get(i).setHealth(player.getBoard().get(i).getHealth() + 1);
         }
-        steps.add(happenings.whatHappenedMageOrPriest(player.getHero(), player.getBoard().get(i)));
+        steps += happenings.whatHappenedMageOrPriest(player.getHero(), player.getBoard().get(i));
         heroPriestPressed = false;
     }
 
@@ -355,7 +366,7 @@ public class Logic {
         } else if(otherPlayer.getBoard().get(i).getMaxHealth() >= otherPlayer.getBoard().get(i).getHealth() + 1) {
             otherPlayer.getBoard().get(i).setHealth(otherPlayer.getBoard().get(i).getHealth() + 1);
         }
-        steps.add(happenings.whatHappenedMageOrPriest(player.getHero(), otherPlayer.getBoard().get(i)));
+        steps += happenings.whatHappenedMageOrPriest(player.getHero(), otherPlayer.getBoard().get(i));
         heroPriestPressed = false;
     }
 
@@ -365,7 +376,7 @@ public class Logic {
         } else if (player.getHero().getHealth() == 29) {
             player.getHero().setHealth(player.getHero().getHealth() + 1);
         }
-        steps.add(happenings.whatHappenedMageOrPriest(player.getHero(), player.getHero()));
+        steps += happenings.whatHappenedMageOrPriest(player.getHero(), player.getHero());
         heroPriestPressed = false;
     }
 
@@ -375,7 +386,7 @@ public class Logic {
         } else if (otherPlayer.getHero().getHealth() == 29) {
             otherPlayer.getHero().setHealth(otherPlayer.getHero().getHealth() + 1);
         }
-        steps.add(happenings.whatHappenedMageOrPriest(player.getHero(), otherPlayer.getHero()));
+        steps += happenings.whatHappenedMageOrPriest(player.getHero(), otherPlayer.getHero());
         heroPriestPressed = false;
     }
 
@@ -411,7 +422,7 @@ public class Logic {
             }
             deck.addCardToBoard(player.getBoard(), (Minion) player.getHand().get(i));
             mana -= player.getHand().get(i).getCost();
-            steps.add(happenings.whatHappenedMinion((Minion)player.getHand().get(i)));
+            steps += happenings.whatHappenedMinion((Minion)player.getHand().get(i));
             player.getHand().remove(player.getHand().get(i));
 
 
@@ -470,7 +481,7 @@ public class Logic {
                 System.out.println("g");
             }
 
-            steps.add(happenings.whatHappenedSpell((Spell)player.getHand().get(i)));
+            steps += happenings.whatHappenedSpell((Spell)player.getHand().get(i));
             mana -= ((Spell) player.getHand().get(i)).getCost();
         }
     }
@@ -703,20 +714,20 @@ public class Logic {
             if (otherPlayer.getBoard().contains(otherPlayer.getBoard().get(i)) && fight.isThereTaunt(otherPlayer.getBoard()) && otherPlayer.getBoard().get(i).getEffect().equals("taunt")) {
                 player.getBoard().get(minionIndex).setCanAttack(false);
                 fight.attackMinion((Minion) player.getBoard().get(minionIndex), (Minion) otherPlayer.getBoard().get(i));
-                steps.add(happenings.setWhatHappenedMinionAttack((Minion) player.getBoard().get(minionIndex), (Minion) otherPlayer.getBoard().get(i)));
+                steps += happenings.setWhatHappenedMinionAttack((Minion) player.getBoard().get(minionIndex), (Minion) otherPlayer.getBoard().get(i));
                 fight.isMinionDied(player.getBoard());
                 fight.isMinionDied(otherPlayer.getBoard());
-                steps.addAll(fight.getSteps());
-                fight.setSteps(new ArrayList<>());
+                steps += fight.getSteps();
+                //fight.setSteps(new ArrayList<>());
             }
             else if (otherPlayer.getBoard().contains((Minion) otherPlayer.getBoard().get(i)) && !fight.isThereTaunt(otherPlayer.getBoard())) {
                 player.getBoard().get(minionIndex).setCanAttack(false);
                 fight.attackMinion((Minion) player.getBoard().get(minionIndex), (Minion) otherPlayer.getBoard().get(i));
-                steps.add(happenings.setWhatHappenedMinionAttack((Minion) player.getBoard().get(minionIndex), (Minion) otherPlayer.getBoard().get(i)));
+                steps += happenings.setWhatHappenedMinionAttack((Minion) player.getBoard().get(minionIndex), (Minion) otherPlayer.getBoard().get(i));
                 fight.isMinionDied(player.getBoard());
                 fight.isMinionDied(otherPlayer.getBoard());
-                steps.addAll(fight.getSteps());
-                fight.setSteps(new ArrayList<>());
+                steps += fight.getSteps();
+                //fight.setSteps(new ArrayList<>());
             }
             minionPressed = false;
         }
@@ -727,7 +738,7 @@ public class Logic {
             if(!otherPlayer.getHero().isImmune() && !fight.isThereTaunt(otherPlayer.getBoard())) {
 
                 player.getBoard().get(minionIndex).setCanAttack(false);
-                steps.add(happenings.setWhatHappenedMinionAttack((Minion) player.getBoard().get(minionIndex), otherPlayer.getHero()));
+                steps += happenings.setWhatHappenedMinionAttack((Minion) player.getBoard().get(minionIndex), otherPlayer.getHero());
                 fight.attackHero((Minion) player.getBoard().get(minionIndex), otherPlayer.getHero());
 
             }
