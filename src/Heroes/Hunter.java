@@ -19,5 +19,4 @@ public class Hunter extends Hero{
     public String toString() {
         return "Hunter";
     }
-
 }

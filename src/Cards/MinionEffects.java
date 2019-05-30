@@ -30,7 +30,6 @@ public class MinionEffects {
         if(minion.getHealth() > minion.getBasicHealth()) {
             minion.setHealth(minion.getBasicHealth());
         }
-
     }
 
     public void addPlus1Plus1AfterFriendly(Minion minion, List<Minion> board) {
@@ -112,11 +111,6 @@ public class MinionEffects {
             if (minion.getAttack() > 3) {
                 listIterator2.remove();
             }
-
         }
-
     }
-
-
-
 }

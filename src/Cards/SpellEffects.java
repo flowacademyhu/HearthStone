@@ -32,7 +32,7 @@ public class SpellEffects {
                 board.get(i + 1).setHealth(board.get(i + 1).getHealth() + 1);
                 board.get(i + 1).setAttack(board.get(i + 1).getAttack() + 1);
 
-            } //else if (board.size() == 1) { }
+            }
             else {
 
                 board.get(i + 1).setHealth(board.get(i + 1).getHealth() + 1);
@@ -40,16 +40,22 @@ public class SpellEffects {
 
             }
         } catch (IndexOutOfBoundsException e) {
-            System.out.println("no use of that move");
+            System.out.println(" ");
         }
     }
 
     public void flee(int i, List<Minion> board, List<Card> hand){
 
         if(hand.size() < 10) {
+
+            if(board.get(i).getEffect().equals("charge")){
+                board.get(i).setCanAttack(true);
+            } else {
+                board.get(i).setCanAttack(false);
+            }
+
             board.get(i).setHealth(board.get(i).getBasicHealth());
             board.get(i).setAttack(board.get(i).getBasicAttack());
-            board.get(i).setCanAttack(false);
 
             hand.add(board.get(i));
         }

@@ -3,7 +3,6 @@ package Actions;
 import Cards.Minion;
 import Heroes.Hero;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 
@@ -14,10 +13,6 @@ public class Fight {
 
     public String getSteps() {
         return steps;
-    }
-
-    public void setSteps(String steps) {
-        this.steps = steps;
     }
 
     //minion vs minion

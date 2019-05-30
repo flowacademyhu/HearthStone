@@ -26,10 +26,6 @@ public abstract class Hero extends JButton {
         return heroName;
     }
 
-    public void setHeroName(String heroName) {
-        this.heroName = heroName;
-    }
-
     public int getHealth() {
         return health;
     }

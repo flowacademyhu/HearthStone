@@ -1,7 +1,5 @@
 package Heroes;
 
-import Cards.Minion;
-
 public class Mage extends Hero{
 
 

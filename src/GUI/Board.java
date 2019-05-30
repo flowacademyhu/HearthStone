@@ -3,6 +3,7 @@ package GUI;
 import Cards.Minion;
 import Heroes.Hero;
 import Logic.Logic;
+import Music.DuelMusic;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -29,34 +30,18 @@ public class Board extends JFrame {
     private List<JButton> boardButtons1 = boardButtonAdder();
     private List<JButton> boardButtons2 = boardButtonAdder();
 
-    //private List<JLabel> steps = stepLabelAdder();
-
     private JTextArea steps = new JTextArea("Commands");
 
     Border blackBorder = BorderFactory.createLineBorder(Color.BLACK, 3);
-    Border greenBorder = BorderFactory.createLineBorder(Color.GREEN, 3);
-    Border redBorder = BorderFactory.createLineBorder(Color.RED, 3);
-    Border blueBorder = BorderFactory.createLineBorder(Color.BLUE, 3);
-    Border greyBorder = BorderFactory.createLineBorder(Color.GRAY, 3);
-    Border emptyBorder = BorderFactory.createEmptyBorder();
-
-    private JLabel sand = new JLabel();
+    Border greenBorder = BorderFactory.createLineBorder(Color.GREEN, 6);
+    Border redBorder = BorderFactory.createLineBorder(Color.RED, 6);
+    Border blueBorder = BorderFactory.createLineBorder(Color.BLUE, 6);
+    Border greyBorder = BorderFactory.createLineBorder(Color.GRAY, 6);
+    Border thinBlack = BorderFactory.createLineBorder(Color.BLACK, 1);
 
     Font fontHappens = new Font("SansSerif", Font.BOLD, 20);
 
-   /* private List<JLabel> stepLabelAdder() {
-
-        List list = new ArrayList<>();
-
-        for(int i = 0; i < 100; i++) {
-
-            JLabel label = new JLabel();
-            label.setVisible(false);
-            list.add(label);
-        }
-
-        return list;
-    }*/
+    DuelMusic duelMusic = new DuelMusic();
 
     public Board(Hero hero1, Hero hero2) throws HeadlessException{
 
@@ -65,9 +50,11 @@ public class Board extends JFrame {
         setExtendedState(JFrame.MAXIMIZED_BOTH);
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 
-        this.logic = new Logic(hero1, hero2);
+        logic = new Logic(hero1, hero2);
 
         gameBoard();
+
+        duelMusic.run();
 
         setVisible(true);
 
@@ -89,6 +76,7 @@ public class Board extends JFrame {
                 }
             });
             button.setPreferredSize(new Dimension(180, 230));
+            button.setBackground(Color.WHITE);
             list.add(button);
         }
         return list;
@@ -160,34 +148,25 @@ public class Board extends JFrame {
 
     private JPanel commands() {
 
-        //TODO happenings SCROLLBAR
-
         JPanel panel = new JPanel();
         steps.setText("Commands" + "\n" + "-------------------" + "\n");
-        //panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS) );
 
         JScrollPane scrollPane = new JScrollPane(steps);
         steps.setCaretPosition(steps.getDocument().getLength() - 1);
+        scrollPane.setVerticalScrollBarPolicy(
+                ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
         DefaultCaret caret = (DefaultCaret) steps.getCaret();
         caret.setUpdatePolicy(ALWAYS_UPDATE);
 
         steps.setEditable(false);
-        steps.setPreferredSize(new Dimension(370, 1000));
-        steps.setBorder(emptyBorder);
         steps.setFont(fontHappens);
+        scrollPane.setPreferredSize(new Dimension(370,520));
 
-        steps.setBackground(Color.WHITE);
-        panel.setBackground(Color.WHITE);
+        scrollPane.setBackground(Color.WHITE);
+        panel.setBackground(Color.ORANGE);
 
         panel.add(scrollPane);
 
-        //JLabel commandTitle = new JLabel("Commands");
-
-        //panel.add(commandTitle);
-
-        /*for (JLabel step: steps) {
-            panel.add(step);
-        }*/
         return panel;
     }
 
@@ -196,7 +175,7 @@ public class Board extends JFrame {
         JPanel panel = new JPanel();
         panel.setLayout(new FlowLayout());
 
-        panel.setBackground(Color.BLACK);
+        panel.setBackground(Color.ORANGE);
 
         for (JButton button:buttons) {
             panel.add(button);
@@ -259,6 +238,11 @@ public class Board extends JFrame {
             logic.endTurn();
             logic.changePlayer();
             update();
+            if(logic.endGame()) {
+                duelMusic.stop();
+                HeroSelection heroSelection = new HeroSelection();
+                setVisible(false);
+            }
 
         });
 
@@ -297,12 +281,9 @@ public class Board extends JFrame {
             panel2.add(button);
         }
 
-        //TODO ICON
-        sand.setIcon(new ImageIcon("/HearthStone/src/Textures/sand.jpg"));
-
-        panel.add(sand);
-        panel1.add(sand);
-        panel2.add(sand);
+        panel.setBackground(Color.ORANGE);
+        panel1.setBackground(Color.ORANGE);
+        panel2.setBackground(Color.ORANGE);
 
         panel.add(panel2);
         panel.add(line);
@@ -313,9 +294,6 @@ public class Board extends JFrame {
     }
 
     private void update() {
-
-        steps.setText("");
-        steps.setText(steps.getText() + "\n" + logic.getSteps());
 
         for (int i = logic.getPlayer().getHand().size(); i < 10; i++) {
             handButtons1.get(i).setVisible(false);
@@ -340,6 +318,11 @@ public class Board extends JFrame {
             } else {
                 handButtons1.get(i).setText(logic.getPlayer().getHand().get(i).getCost() + " " + logic.getPlayer().getHand().get(i).getName());
                 handButtons1.get(i).setToolTipText("Spell" + " " + logic.getPlayer().getHand().get(i).getDescription());
+            }
+            if(logic.getPlayer().getHand().get(i).getCost() <= logic.getMana()){
+                handButtons1.get(i).setBorder(greenBorder);
+            } else {
+                handButtons1.get(i).setBorder(thinBlack);
             }
             handButtons1.get(i).setVisible(true);
         }
@@ -377,16 +360,29 @@ public class Board extends JFrame {
         if(logic.getPlayer().getHero().isImmune()){
             playerHero1Button.setBorder(blueBorder);
         } else {
-            playerHero1Button.setBorder(null);
+            playerHero1Button.setBorder(thinBlack);
         }
         playerHero2Button.setText(logic.getOtherPlayer().getHero().getHeroName() + " " + logic.getOtherPlayer().getHero().getHealth());
         if(logic.getOtherPlayer().getHero().isImmune()){
             playerHero2Button.setBorder(blueBorder);
         } else {
-            playerHero2Button.setBorder(null);
+            playerHero2Button.setBorder(thinBlack);
         }
         mana.setText("Mana: " + logic.getMana() + " Deck: " + logic.getPlayer().getDeck().size());
+        if(logic.endGame()) {
+            endTurnButton.setText("New Game");
+            for(int i = 0; i < logic.getOtherPlayer().getHand().size(); i++) {
 
+                if(logic.getOtherPlayer().getHand().get(i) instanceof Minion) {
+                    handButtons2.get(i).setText(logic.getOtherPlayer().getHand().get(i).getCost() + " " + logic.getOtherPlayer().getHand().get(i).getName() + " " + ((Minion) logic.getOtherPlayer().getHand().get(i)).getAttack() + " " + ((Minion) logic.getOtherPlayer().getHand().get(i)).getHealth());
+                    handButtons2.get(i).setToolTipText("Minion" + " " + logic.getOtherPlayer().getHand().get(i).getDescription());
+                } else {
+                    handButtons2.get(i).setText(logic.getOtherPlayer().getHand().get(i).getCost() + " " + logic.getOtherPlayer().getHand().get(i).getName());
+                    handButtons2.get(i).setToolTipText("Spell" + " " + logic.getOtherPlayer().getHand().get(i).getDescription());
+                }
+            }
+        }
+        steps.setText("");
+        steps.setText(steps.getText() + "\n" + logic.getSteps());
     }
-
 }

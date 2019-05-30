@@ -1,8 +1,7 @@
 package GUI;
 
-import Heroes.Hero;
-import Heroes.Hunter;
-import Heroes.Mage;
+import Heroes.*;
+import Music.InnkeeperSpeech;
 
 import javax.swing.*;
 import java.awt.*;
@@ -36,6 +35,8 @@ public class HeroSelection extends JFrame {
     List<JButton> buttons = new ArrayList<>();
     List<JButton> buttonsOther = new ArrayList<>();
 
+    InnkeeperSpeech innkeeperSpeech = new InnkeeperSpeech();
+
     public HeroSelection(){
 
         setTitle("FlowStone");
@@ -46,6 +47,9 @@ public class HeroSelection extends JFrame {
         selectHeroes();
 
         setVisible(true);
+
+        innkeeperSpeech.run();
+
     }
 
     private void selectHeroes() {
@@ -91,11 +95,9 @@ public class HeroSelection extends JFrame {
 
     private JPanel icon() {
 
-        //TODO icon
-
         JPanel panel = new JPanel();
 
-        icon.setIcon(new ImageIcon("Textures/sand.jpg"));
+        icon.setIcon(new ImageIcon("./src/Texture/hearthstone.png"));
 
         panel.add(icon);
 
@@ -117,11 +119,11 @@ public class HeroSelection extends JFrame {
                 } else if(((JButton)e.getSource()).getText().equals("Mage")){
                     hero1 = new Mage("Mage", false);
                 } else if(((JButton)e.getSource()).getText().equals("Warlock")){
-                    hero1 = new Hunter("Warlock", false);
+                    hero1 = new Warlock("Warlock", false);
                 } else if(((JButton)e.getSource()).getText().equals("Paladin")){
-                    hero1 = new Hunter("Paladin", false);
+                    hero1 = new Paladin("Paladin", false);
                 } else if(((JButton)e.getSource()).getText().equals("Priest")){
-                    hero1 = new Hunter("Priest", false);
+                    hero1 = new Priest("Priest", false);
                 }
                 playerOneReady = true;
                 startTheGame();
@@ -144,11 +146,11 @@ public class HeroSelection extends JFrame {
                 } else if(((JButton)e.getSource()).getText().equals("Mage")){
                     hero2 = new Mage("Mage", false);
                 } else if(((JButton)e.getSource()).getText().equals("Warlock")){
-                    hero2 = new Hunter("Warlock", false);
+                    hero2 = new Warlock("Warlock", false);
                 } else if(((JButton)e.getSource()).getText().equals("Paladin")){
-                    hero2 = new Hunter("Paladin", false);
+                    hero2 = new Paladin("Paladin", false);
                 } else if(((JButton)e.getSource()).getText().equals("Priest")){
-                    hero2 = new Hunter("Priest", false);
+                    hero2 = new Priest("Priest", false);
                 }
                 playerTwoReady = true;
                 startTheGame();
@@ -160,6 +162,8 @@ public class HeroSelection extends JFrame {
         if(playerOneReady && playerTwoReady) {
 
             Board board = new Board(hero1, hero2);
+
+            innkeeperSpeech.stopMenuMusic();
 
             setVisible(false);
         }

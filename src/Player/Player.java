@@ -24,24 +24,12 @@ public class Player {
         return board;
     }
 
-    public void setBoard(List<Minion> board) {
-        this.board = board;
-    }
-
     public List<Card> getDeck() {
         return deck;
     }
 
-    public void setDeck(List<Card> deck) {
-        this.deck = deck;
-    }
-
     public List<Card> getHand() {
         return hand;
-    }
-
-    public void setHand(List<Card> hand) {
-        this.hand = hand;
     }
 
     public Hero getHero() {

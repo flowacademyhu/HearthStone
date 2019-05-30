@@ -1,7 +1,6 @@
 package Cards;
 
 import javax.swing.*;
-import java.util.List;
 
 public class Card extends JButton {
 
@@ -27,16 +26,8 @@ public class Card extends JButton {
         return description;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
     public int getCost() {
         return cost;
-    }
-
-    public void setCost(int cost) {
-        this.cost = cost;
     }
 
     @Override

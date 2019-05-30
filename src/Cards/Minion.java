@@ -1,6 +1,5 @@
 package Cards;
 
-import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -33,16 +32,8 @@ public class Minion extends Card {
         return basicAttack;
     }
 
-    public void setBasicAttack(int basicAttack) {
-        this.basicAttack = basicAttack;
-    }
-
     public int getBasicHealth() {
         return basicHealth;
-    }
-
-    public void setBasicHealth(int basicHealth) {
-        this.basicHealth = basicHealth;
     }
 
     public boolean isCanAttack() {
@@ -55,10 +46,6 @@ public class Minion extends Card {
 
     public int getMaxHealth() {
         return maxHealth;
-    }
-
-    public void setMaxHealth(int maxHealth) {
-        this.maxHealth = maxHealth;
     }
 
     public int getAttack() {
@@ -83,10 +70,6 @@ public class Minion extends Card {
 
     public void setEffect(String effect) {
         this.effect = effect;
-    }
-
-    public String getId() {
-        return id;
     }
 
     public boolean isFreezed() {
