@@ -141,7 +141,7 @@ public class Logic {
             isPlayer2Turn = false;
 
             steps += newline + "------------" + "\n";
-            steps += happenings.endGame(player1.getHero());
+            steps += happenings.endGame(player1.getHero()) + "Press New Game";
             steps += newline + "------------" + "\n";
 
             fight.makeCanNotAttack(player.getBoard());
@@ -154,7 +154,7 @@ public class Logic {
             isPlayer2Turn = false;
 
             steps += newline + "------------" + "\n";
-            steps += happenings.endGame(player2.getHero());
+            steps += happenings.endGame(player2.getHero()) + "Press New Game";
             steps += newline + "------------" + "\n";
 
             fight.makeCanNotAttack(player.getBoard());

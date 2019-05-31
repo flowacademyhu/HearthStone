@@ -76,7 +76,7 @@ public class Board extends JFrame {
                 }
             });
             button.setPreferredSize(new Dimension(180, 230));
-            button.setBackground(Color.WHITE);
+            button.setBackground(new Color(255,248,220));
             list.add(button);
         }
         return list;
@@ -122,6 +122,7 @@ public class Board extends JFrame {
                 update();
             });
             button.setPreferredSize(new Dimension(200, 150));
+            button.setBackground(new Color(255,248,220));
             list.add(button);
         }
         return list;
@@ -163,7 +164,7 @@ public class Board extends JFrame {
         scrollPane.setPreferredSize(new Dimension(370,520));
 
         scrollPane.setBackground(Color.WHITE);
-        panel.setBackground(Color.ORANGE);
+        panel.setBackground(new Color(222,184,135));
 
         panel.add(scrollPane);
 
@@ -175,7 +176,7 @@ public class Board extends JFrame {
         JPanel panel = new JPanel();
         panel.setLayout(new FlowLayout());
 
-        panel.setBackground(Color.ORANGE);
+        panel.setBackground(new Color(222,184,135));
 
         for (JButton button:buttons) {
             panel.add(button);
@@ -281,9 +282,9 @@ public class Board extends JFrame {
             panel2.add(button);
         }
 
-        panel.setBackground(Color.ORANGE);
-        panel1.setBackground(Color.ORANGE);
-        panel2.setBackground(Color.ORANGE);
+        panel.setBackground(new Color(222,184,135));
+        panel1.setBackground(new Color(222,184,135));
+        panel2.setBackground(new Color(222,184,135));
 
         panel.add(panel2);
         panel.add(line);
@@ -294,6 +295,10 @@ public class Board extends JFrame {
     }
 
     private void update() {
+
+        playerHero1Button.setBackground(new Color(255,248,220));
+        playerHero2Button.setBackground(new Color(255,248,220));
+        endTurnButton.setBackground(new Color(255,248,220));
 
         for (int i = logic.getPlayer().getHand().size(); i < 10; i++) {
             handButtons1.get(i).setVisible(false);
@@ -370,6 +375,13 @@ public class Board extends JFrame {
         }
         mana.setText("Mana: " + logic.getMana() + " Deck: " + logic.getPlayer().getDeck().size());
         if(logic.endGame()) {
+            if(logic.getPlayer().getHero().getHealth() <= 0){
+                playerHero1Button.setBackground(Color.red);
+                playerHero2Button.setBackground(Color.green);
+            } if (logic.getOtherPlayer().getHero().getHealth() <= 0) {
+                playerHero1Button.setBackground(Color.green);
+                playerHero2Button.setBackground(Color.red);
+            }
             endTurnButton.setText("New Game");
             for(int i = 0; i < logic.getOtherPlayer().getHand().size(); i++) {
 
